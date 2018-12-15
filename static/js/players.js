@@ -9,6 +9,8 @@ $(function() {
 
     if (position == 'All') {
       position = '';
+    } else if (position == 'DEF') {
+      position = 'D';
     }
 
     $(".player-list tr").filter(function() {

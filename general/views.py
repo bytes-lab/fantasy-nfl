@@ -17,7 +17,7 @@ from general.models import *
 from general.lineup import *
 from general.color import *
 
-POSITION = ['PG', 'SG', 'SF', 'PF', 'C']
+POSITION = ['QB', 'RB', 'WR', 'TE', 'D']
 
 
 def _get_game_today():
