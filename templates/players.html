@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load extra %}
+
+{% block content %}
+<div class="container">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-12 mb-4">
+        <h5 class="mb-4">Player List</h5>
+        <div class="p-2" style="border: 1px solid #eee;">
+          <div class="col-md-6 p-0">
+            <ul class="nav nav-pills position-filter p-2">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">All</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">PG</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">SG</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">SF</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">PF</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">C</a>
+              </li>
+            </ul>
+          </div>
+          <input class="form-control m-2 mb-3" id="search-player" type="search" placeholder="Search Player Name" autocomplete="off">
+          <div class="col-md-12 games player-board player-list">
+            <table class="table table-hover table-responsive-md">
+            <thead>
+              <tr>
+                <th>Player</th><th>&nbsp;</th><th>&nbsp;</th>
+                <th>POS</th>
+                <th>Team</th>
+                <th>Salary</th><th>&nbsp;</th>
+                <th>AMPG</th>
+                <th>SMPG</th>
+                <th>AFP</th>
+                <th>SFP</th>
+                <th>L3A</th>
+                <th>VAL</th>
+                <th>INJ</th>
+                <th></th>
+              </tr>
+            </thead>
+              <tbody>
+                {% for ii in players %}
+                  <tr>
+                    <td colspan="3"><a href="/players/{{ ii.id }}"><img src="{{ ii.avatar }}" height="24" class="mr-2">{{ ii.first_name }} {{ ii.last_name }}</a></td>
+                    <td>{{ ii.position }}</td>
+                    <td>{{ ii.team }}</td>
+                    <td colspan="2">$ {{ ii.salary|floatformat:0 }}</td>
+                    <td>{% if ii.minutes > -1 %}{{ ii.minutes|floatformat:1 }}{% else %}-{% endif %}</td>
+                    <td>{% if ii.over_under > -1 %}{{ ii.over_under|floatformat:1 }}{% else %}-{% endif %}</td>
+                    <td>{% if ii.salary_custom > -1 %}{{ ii.salary_custom|floatformat:1 }}{% else %}-{% endif %}</td>
+                    <td>{% if ii.proj_site > -1 %}{{ ii.proj_site|floatformat:1 }}{% else %}-{% endif %}</td>
+                    <td>{% if ii.salary_original > -1 %}{{ ii.salary_original|floatformat:1 }}{% else %}-{% endif %}</td>
+                    <td>{% if ii.value > -1 %}{{ ii.value|floatformat:1 }}{% else %}-{% endif %}</td>
+                    <td class="text-danger">{{ ii.injury }}</td>
+                    <td><i class="far fa-thumbs-up fav {{ ii.uid|liked:request.session }}" data-uid="{{ ii.uid }}"></i></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>  
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/players.js"></script>
+{% endblock %}
