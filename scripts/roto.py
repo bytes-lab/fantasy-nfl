@@ -29,7 +29,7 @@ def get_players(data_source, teams):
         for ii in players:
             defaults = { key: str(ii[key]).replace(',', '') for key in fields }
             defaults['available'] = ii['team'] in teams
-            defaults['injury'] = html2text.html2text(ii['injury']).strip()
+            defaults['injury'] = html2text.html2text(ii['injury']).strip().upper()
 
             obj = Player.objects.update_or_create(uid=ii['id'], data_source=data_source,
                                                   defaults=defaults)
