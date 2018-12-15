@@ -43,18 +43,13 @@ class Player(models.Model):
     team_points = models.FloatField(default=0)
     value = models.FloatField(default=0)
     
-    play_today = models.BooleanField(default=False)
+    available = models.BooleanField(default=False)
     data_source = models.CharField(max_length=30, choices=DATA_SOURCE, default='FanDuel')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
-
-    @property
-    def available(self):
-        return Game.objects.filter(Q(home_team=self.team)|Q(visit_team=self.team)) \
-                           .exclude(game_status='started').exists()
 
 
 GAME_RESULT = (

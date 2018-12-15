@@ -6,10 +6,10 @@ from django.contrib import admin
 from general.models import *
 
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'position', 'team', 'opponent', 'salary', 'play_today', 
+    list_display = ['first_name', 'last_name', 'position', 'team', 'opponent', 'salary', 'available', 
                     'proj_points', 'data_source', 'avatar', 'created_at', 'updated_at']
     search_fields = ['first_name', 'last_name', 'team']
-    list_filter = ['team', 'data_source', 'position', 'play_today']
+    list_filter = ['team', 'data_source', 'position', 'available']
 
 
 class PlayerGameAdmin(admin.ModelAdmin):

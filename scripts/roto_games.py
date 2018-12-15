@@ -10,7 +10,6 @@ django.setup()
 
 from general.models import *
 from general.views import *
-import pdb
 
 def get_games():
     # try:
@@ -21,9 +20,10 @@ def get_games():
             Game.objects.all().delete()
             fields = ['game_status', 'ml', 'home_team', 'visit_team', 'date']
             for ii in games:
-                defaults = { key: ii[key] for key in fields }
-                defaults['ou'] = float(ii.get('ou', 0))
-                Game.objects.create(**defaults)
+                if ii['game_status'] == 'upcoming':
+                    defaults = { key: ii[key] for key in fields }
+                    defaults['ou'] = float(ii.get('ou', 0))
+                    Game.objects.create(**defaults)
             # build_TMS_cache()
             # build_player_cache()
     # except:

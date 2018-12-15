@@ -13,7 +13,7 @@ from general.models import *
 from general import html2text
 import pdb
 
-def get_players(data_source):
+def get_players(data_source, teams):
     try:
         slate = 'Thu-Mon' if data_source in ['FanDuel', 'DraftKings'] else 'all'
         url = 'https://www.rotowire.com/daily/tables/optimizer-nfl.php?sport=NFL&' + \
@@ -28,8 +28,9 @@ def get_players(data_source):
         print data_source, len(players)
         for ii in players:
             defaults = { key: str(ii[key]).replace(',', '') for key in fields }
-
+            defaults['available'] = ii['team'] in teams
             defaults['injury'] = html2text.html2text(ii['injury']).strip()
+
             obj = Player.objects.update_or_create(uid=ii['id'], data_source=data_source,
                                                   defaults=defaults)
     except:
@@ -37,5 +38,8 @@ def get_players(data_source):
 
 
 if __name__ == "__main__":
+    games = Game.objects.all()
+    teams = [ii.home_team for ii in games] + [ii.visit_team for ii in games]
+    Player.objects.all().update(available=False)
     for ds in DATA_SOURCE:
-        get_players(ds[0])
+        get_players(ds[0], teams)

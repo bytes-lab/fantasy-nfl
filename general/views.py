@@ -64,7 +64,7 @@ def get_players(request):
     teams = request.POST.get('games').strip(';').replace(';', '-').split('-')
     players = Player.objects.filter(data_source=ds, 
                                     team__in=teams,
-                                    play_today=True) \
+                                    available=True) \
                             .order_by('-proj_points')
     return HttpResponse(render_to_string('player-list_.html', locals()))
 
@@ -379,7 +379,7 @@ def team_match_up(request):
 
 def build_player_cache():
     # player info -> build cache
-    players = Player.objects.filter(data_source='FanDuel', play_today=True) \
+    players = Player.objects.filter(data_source='FanDuel', available=True) \
                             .order_by('-proj_points')
     game_info = {}
     for game in Game.objects.all():
@@ -428,7 +428,7 @@ def player_match_up(request):
 
     all_teams = _all_teams()
     colors = linear_gradient('#90EE90', '#137B13', len(all_teams))['hex']
-    players = Player.objects.filter(data_source=ds, play_today=True, team__in=teams_) \
+    players = Player.objects.filter(data_source=ds, available=True, team__in=teams_) \
                             .order_by('-proj_points')
     players_ = []
     for player in players:
