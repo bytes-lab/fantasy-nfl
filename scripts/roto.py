@@ -14,7 +14,7 @@ from general import html2text
 import pdb
 
 def get_players(data_source):
-    # try:
+    try:
         slate = 'Thu-Mon' if data_source in ['FanDuel', 'DraftKings'] else 'all'
         url = 'https://www.rotowire.com/daily/tables/optimizer-nfl.php?sport=NFL&' + \
               'site={}&projections=&type=main&slate={}'.format(data_source, slate)
@@ -32,8 +32,8 @@ def get_players(data_source):
             defaults['injury'] = html2text.html2text(ii['injury']).strip()
             obj = Player.objects.update_or_create(uid=ii['id'], data_source=data_source,
                                                   defaults=defaults)
-    # except:
-    #     print('*** Something is wrong ***')
+    except:
+        print('*** Something is wrong ***')
 
 
 if __name__ == "__main__":

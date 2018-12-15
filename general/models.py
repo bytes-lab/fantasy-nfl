@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models import Q
+
 
 DATA_SOURCE = (
     ('FanDuel', 'FanDuel'),
@@ -9,6 +11,7 @@ DATA_SOURCE = (
     ('Yahoo', 'Yahoo'),
     ('Fanball', 'Fanball')
 )
+
 
 class Player(models.Model):
     uid = models.IntegerField()
@@ -47,6 +50,11 @@ class Player(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.first_name, self.last_name)
+
+    @property
+    def available(self):
+        return Game.objects.filter(Q(home_team=self.team)|Q(visit_team=self.team)) \
+                           .exclude(game_status='started').exists()
 
 
 GAME_RESULT = (
@@ -89,7 +97,7 @@ class PlayerGame(models.Model):
 
 GAME_STATUS = (
     ('started', 'Started'),
-    ('upcomming', 'Upcomming')
+    ('upcoming', 'Upcomming')
 )
 
 class Game(models.Model):
@@ -97,7 +105,7 @@ class Game(models.Model):
     visit_team = models.CharField(max_length=20)
     ou = models.FloatField(default=0)
     ml = models.CharField(max_length=20)
-    date = models.DateTimeField()
+    date = models.CharField(max_length=30)
     game_status = models.CharField(max_length=50, choices=GAME_STATUS, default='started')
 
     def __str__(self):

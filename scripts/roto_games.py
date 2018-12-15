@@ -1,5 +1,4 @@
 import requests
-import datetime
 
 import os
 from os import sys, path
@@ -15,22 +14,18 @@ import pdb
 
 def get_games():
     # try:
-        url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=NBA&' + \
-              'site=FanDuel&type=main&slate=Main'
+        url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=NFL&site=FanDuel&type=main&slate=Thu-Mon'
 
         games = requests.get(url).json()
         if games:
             Game.objects.all().delete()
-            fields = ['game_status', 'ml', 'home_team', 'visit_team']
+            fields = ['game_status', 'ml', 'home_team', 'visit_team', 'date']
             for ii in games:
-                defaults = { key: str(ii[key]).replace(',', '') for key in fields }
-                defaults['date'] = datetime.datetime.strptime(ii['date'].split(' ')[1], '%I:%M%p')
-                # date is not used
-                defaults['date'] = datetime.datetime.combine(datetime.date.today(), defaults['date'].time())
-                defaults['ou'] = float(ii['ou']) if ii['ou'] else 0
+                defaults = { key: ii[key] for key in fields }
+                defaults['ou'] = float(ii.get('ou', 0))
                 Game.objects.create(**defaults)
-            build_TMS_cache()
-            build_player_cache()
+            # build_TMS_cache()
+            # build_player_cache()
     # except:
     #     pass
 
