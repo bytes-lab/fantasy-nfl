@@ -53,8 +53,8 @@ class Player(models.Model):
 
 
 class PlayerGame(models.Model):
-    name = models.CharField("Player", max_length=50)
-    uid = models.CharField("Player", max_length=50)
+    name = models.CharField(max_length=50)
+    uid = models.CharField(max_length=50)
 
     team = models.CharField("Tm", max_length=10)
     game_location = models.CharField("H-A", max_length=5)

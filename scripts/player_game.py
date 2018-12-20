@@ -19,7 +19,7 @@ django.setup()
 from general.models import *
 
 def sync(type_, val):
-    # bball -> roto
+    # fit into roto
     val = val.strip().strip('@')
     conv = {
         'team': {
@@ -38,71 +38,74 @@ def sync(type_, val):
     }
     return conv[type_][val] if val in conv[type_] else val
 
-def scrape(param):
-    dp = "https://www.pro-football-reference.com/play-index/pgl_finder.cgi?request=1&match=game&year_min=2018&year_max=2018&season_start=1&season_end=-1&age_min=0&age_max=99&game_type=A&league_id=&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_location=&game_result=&handedness=&is_active=&is_hof=&from_link=1&" + param
-    print (dp)
-    response = urllib2.urlopen(dp)
-    r = response.read()
+def scrape(week):
+    url = "https://www.pro-football-reference.com/play-index/pgl_finder.cgi?request=1&match=game&year_min=2018&year_max=2018&season_start=1&season_end=-1&age_min=0&age_max=99&game_type=A&league_id=&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_location=&game_result=&handedness=&is_active=&is_hof=&from_link=1&"
 
-    soup = BeautifulSoup(r, "html.parser")
+    for type_ in ['pass_att', 'rush_att', 'rec']:
+        param = "week_num_min={0}&week_num_max={0}&game_day_of_week=&c1stat={1}&c1comp=gt&c1val=1&c2stat=&c2comp=gt&c2val=&c3stat=&c3comp=gt&c3val=&c4stat=&c4comp=gt&c4val=&order_by=age".format(week, type_)
+        offset = 0
+        while True:
+            _offset = '&offset={}'.format(offset)
+            dp = url + param + _offset
+            print (dp)
+            response = urllib2.urlopen(dp)
+            r = response.read()
 
-    try:
-        table = soup.find("table", {"id":"results"})
-        player_rows = table.find("tbody")
-        players = player_rows.find_all("tr")
-    except Exception as e:
-        print (e)
-        return  # no players
+            soup = BeautifulSoup(r, "html.parser")
 
-    for player in players:
-        try:
-            if player.get('class'): # ignore header
-                continue
+            try:
+                table = soup.find("table", {"id":"results"})
+                player_rows = table.find("tbody")
+                players = player_rows.find_all("tr")
+                if not players:
+                    break
+            except Exception as e:
+                print (e)
+                return  # no players
 
-            name = player.find("td", {"data-stat":"player"}).text.strip()
-            name = sync('name', name)
-            pos = player.find("td", {"data-stat":"pos"}).text
-            game_date = player.find("td", {"data-stat":"game_date"}).text
-            team = player.find("td", {"data-stat":"team"}).text.strip()
-            team = sync('team', team)
-            opp = player.find("td", {"data-stat":"opp"}).text
-            opp = sync('team', opp)
+            for player in players:
+                try:
+                    if player.get('class'): # ignore header
+                        continue
 
-            pid = player.find("td", {"data-stat":"player"}).get('data-append-csv')
-            player_ = Player.objects.filter(first_name__iexact=name.split(' ')[0],
-                                            last_name__iexact=name.split(' ')[1],
-                                            team=team)
-            # update avatar for possible new players
-            avatar = 'https://d395i9ljze9h3x.cloudfront.net/req/20180910/images/headshots/{}_2018.jpg'.format(pid)
-            player_.update(avatar=avatar)
+                    name = player.find("td", {"data-stat":"player"}).text.strip()
+                    name = sync('name', name)
+                    game_date = player.find("td", {"data-stat":"game_date"}).text            
+                    date = datetime.datetime.strptime(game_date, '%Y-%m-%d')
+                    uid = player.find("td", {"data-stat":"player"}).get('data-append-csv')
 
-            defaults = {
-                'location': player.find("td", {"data-stat":"game_location"}).text,
-                'opp': opp,
-                'game_result': player.find("td", {"data-stat":"game_result"}).text,
-                'targets': int(player.find("td", {"data-stat":"targets"}).text),
-                'rec': player.find("td", {"data-stat":"rec"}).text,
-                'rec_yds': player.find("td", {"data-stat":"rec_yds"}).text or None,
-                'rec_yds_per_rec': player.find("td", {"data-stat":"rec_yds_per_rec"}).text,
-                'rec_td': int(player.find("td", {"data-stat":"rec_td"}).text),
-                'catch_pct': player.find("td", {"data-stat":"catch_pct"}).text or None,
-                'rec_yds_per_tgt': player.find("td", {"data-stat":"rec_yds_per_tgt"}).text,
-                'name': name,
-                'pos': pos,
-                'game_date': game_date,
-                'team': team
-            }
+                    defaults = {
+                        'name': name,
+                        'week_num': week
+                    }
 
-            # PlayerGame.objects.update_or_create(name=name, team=team, date=date, defaults=defaults)
-            print defaults
-        except (Exception) as e:
-            print (e)
+                    fields = ['team', 'game_location', 'opp', 'game_result', 'pos', 'pass_cmp', 'pass_att', 'pass_cmp_perc', 
+                              'pass_yds', 'pass_td', 'pass_td', 'pass_int', 'pass_rating', 'pass_sacked', 'pass_sacked_yds', 
+                              'pass_yds_per_att', 'pass_adj_yds_per_att', 'rush_att', 'rush_yds', 'rush_yds_per_att', 'rush_td', 
+                              'targets', 'rec', 'rec_yds', 'rec_yds_per_rec', 'rec_td', 'catch_pct', 'rec_yds_per_tgt', 'all_td', 
+                              'fumbles', 'fumbles_forced', 'fumbles_rec', 'fumbles_rec_yds', 'fumbles_rec_td']
+
+                    for ii in fields:
+                        field = player.find("td", {"data-stat": ii})
+                        defaults[ii] = field.text.replace('%', '') if field else None
+
+                    defaults['team'] = sync('team', defaults['team'])
+                    defaults['opp'] = sync('team', defaults['opp'])
+
+                    player_ = Player.objects.filter(first_name__iexact=name.split(' ')[0],
+                                                    last_name__iexact=name.split(' ')[1],
+                                                    team=defaults['team'])
+                    # update avatar for possible new players
+                    avatar = 'https://d395i9ljze9h3x.cloudfront.net/req/20180910/images/headshots/{}_2018.jpg'.format(uid)
+                    player_.update(avatar=avatar)
+
+                    PlayerGame.objects.update_or_create(uid=uid, date=date, defaults=defaults)
+                except (Exception) as e:
+                    print defaults
+                    print (e)
+            offset += 100
     
 
 if __name__ == "__main__":
-    # take care of pagination, week, type
-    param = "week_num_min=3&week_num_max=5&game_day_of_week=&c1stat=rec&c1comp=gt&c1val=1&c2stat=&c2comp=gt&c2val=&c3stat=&c3comp=gt&c3val=&c4stat=&c4comp=gt&c4val=&order_by=rec_yds"
-    # for delta in range(3):
-    #     date = datetime.datetime.now() + datetime.timedelta(days=-delta)
-    #     param = 'month={}&day={}&year={}&type=all'.format(date.month, date.day, date.year)
-    scrape(param)
+    for week in range(1, 15):
+        scrape(week)
