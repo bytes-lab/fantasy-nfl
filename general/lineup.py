@@ -1,15 +1,16 @@
 import operator as op
 from ortools.linear_solver import pywraplp
 from general.models import *
+import pdb
 
 
 class Roster:
     POSITION_ORDER = {
-        "PG": 0,
-        "SG": 1,
-        "SF": 2,
-        "PF": 3,
-        "C": 4
+        "QB": 0,
+        "RB": 1,
+        "WR": 2,
+        "TE": 3,
+        "D": 4
     }
 
     def __init__(self):
@@ -49,9 +50,9 @@ class Roster:
             s = ','.join(str(x) for x in self.sorted_players())+'\n'
         else:
             pos = {
-                'DraftKings': ['PG', 'SG', 'SF', 'PF', 'C', 'PG,SG', 'SF,PF'],
-                'Yahoo': ['PG', 'SG', 'PG,SG', 'SF', 'PF', 'SF,PF', 'C'],
-                'Fanball': ['PG', 'SG', 'SF', 'PF', 'C', 'PG,SG', 'SF,PF,C']
+                'DraftKings': ['QB', 'RB', 'WR', 'TE', 'D', 'QB,RB', 'WR,TE'],
+                'Yahoo': ['QB', 'RB', 'QB,RB', 'WR', 'TE', 'WR,TE', 'D'],
+                'Fanball': ['QB', 'RB', 'WR', 'TE', 'D', 'QB,RB', 'WR,TE,D']
             }
             pos = pos[ds]
             players = list(self.players)
@@ -74,38 +75,37 @@ class Roster:
 
 POSITION_LIMITS = {
     'FanDuel': [
-                   ["PG", 2, 2],
-                   ["SG", 2, 2],
-                   ["SF", 2, 2],
-                   ["PF", 2, 2],
-                   ["C", 1, 1]
+                   ["QB", 2, 2],
+                   ["RB", 2, 2],
+                   ["WR", 2, 2],
+                   ["TE", 2, 2],
+                   ["D", 1, 1]
                ],
     'DraftKings': [
-                      ["PG", 1, 3],
-                      ["SG", 1, 3],
-                      ["SF", 1, 3],
-                      ["PF", 1, 3],
-                      ["C", 1, 2],
-                      ["PG,SG", 3, 4],
-                      ["SF,PF", 3, 4]
+                      ["QB", 1, 1],
+                      ["RB", 2, 3],
+                      ["WR", 3, 4],
+                      ["TE", 1, 2],
+                      ["D", 1, 1],
+                      ["RB,WR,TE", 7, 7]
                   ],
     'Yahoo': [
-                ["PG", 1, 3],
-                ["SG", 1, 3],
-                ["SF", 1, 3],
-                ["PF", 1, 3],
-                ["C", 1, 2],
-                ["PG,SG", 3, 4],
-                ["SF,PF", 3, 4]
+                ["QB", 1, 3],
+                ["RB", 1, 3],
+                ["WR", 1, 3],
+                ["TE", 1, 3],
+                ["D", 1, 2],
+                ["QB,RB", 3, 4],
+                ["WR,TE", 3, 4]
             ],
     'Fanball': [
-                ["PG", 1, 3],
-                ["SG", 1, 3],
-                ["SF", 1, 3],
-                ["PF", 1, 3],
-                ["C", 1, 3],
-                ["PG,SG", 3, 4],
-                ["SF,PF", 3, 4]
+                ["QB", 1, 3],
+                ["RB", 1, 3],
+                ["WR", 1, 3],
+                ["TE", 1, 3],
+                ["D", 1, 3],
+                ["QB,RB", 3, 4],
+                ["WR,TE", 3, 4]
             ]
 }
 
@@ -118,7 +118,7 @@ SALARY_CAP = {
 
 ROSTER_SIZE = {
     'FanDuel': 9,
-    'DraftKings': 8,
+    'DraftKings': 9,
     'Yahoo': 8,
     'Fanball': 8
 }
@@ -157,7 +157,7 @@ def get_lineup(ds, players, teams, locked, max_point):
             if player.position in position:
                 position_cap.SetCoefficient(variables[i], 1)
 
-    # at most 4 players from one team (yahoo)
+    # at most 6 players from one team (yahoo)
     for team in teams:
         team_cap = solver.Constraint(0, 6)
         for i, player in enumerate(players):
@@ -168,6 +168,7 @@ def get_lineup(ds, players, teams, locked, max_point):
     for variable in variables:
         size_cap.SetCoefficient(variable, 1)
 
+    # pdb.set_trace()
     solution = solver.Solve()
 
     if solution == solver.OPTIMAL:
@@ -185,6 +186,7 @@ def calc_lineups(players, num_lineups, locked=[], ds='FanDuel'):
 
     max_point = 10000
     teams = set([ii.team for ii in players])
+    # pdb.set_trace()
     while True:
         # add condition projection > 0
         roster = get_lineup(ds, players, teams, locked, max_point)

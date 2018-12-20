@@ -494,7 +494,7 @@ def _get_lineups(request):
     ids = [int(ii) for ii in ids]
     locked = [int(ii) for ii in locked]
 
-    players = Player.objects.filter(id__in=ids)
+    players = Player.objects.filter(id__in=ids, proj_points__gt=0)
     lineups = calc_lineups(players, num_lineups, locked, ds)
     return lineups, players
 
@@ -552,7 +552,12 @@ def export_lineups(request):
 def update_point(request):
     pid = int(request.POST.get('pid'))
     points = request.POST.get('val')
-    # Player.objects.filter(id=pid).update(proj_points=points)
+
+    player = Player.objects.get(id=pid)
+    cus_proj = request.session.get('cus_proj', {})
+    cus_proj[pid] = points
+    request.session['cus_proj'] = cus_proj
+
     return HttpResponse('')
 
 

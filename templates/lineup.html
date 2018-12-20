@@ -18,7 +18,7 @@
                   <input type="checkbox" class="form-check-input" checked="" value="{{ game.home_team }}-{{ game.visit_team }}">{{ game.visit_team }} @ {{ game.home_team }}
                 </label>
               </div>
-              <div class="ml-4 text-secondary">( {{ game.date|date:"H:i" }} )</div>
+              <div class="ml-4 text-secondary">( {{ game.date }} )</div>
             </div>
           {% endfor %}
         </div>
@@ -38,19 +38,19 @@
               <a class="nav-link active" href="#">All</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">PG</a>
+              <a class="nav-link" href="#">QB</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">SG</a>
+              <a class="nav-link" href="#">WR</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">SF</a>
+              <a class="nav-link" href="#">RB</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">PF</a>
+              <a class="nav-link" href="#">TE</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">C</a>
+              <a class="nav-link" href="#">DEF</a>
             </li>
           </ul>
           <input class="form-control m-2 mb-3" id="search-player" type="search" placeholder="Search Player Name" autocomplete="off">
