@@ -46,25 +46,15 @@ class Roster:
 
     def get_csv(self, ds):
         s = ''
-        if ds == 'FanDuel': 
-            s = ','.join(str(x) for x in self.sorted_players())+'\n'
-        else:
-            pos = {
-                'DraftKings': ['QB', 'RB', 'WR', 'TE', 'D', 'QB,RB', 'WR,TE'],
-                'Yahoo': ['QB', 'RB', 'QB,RB', 'WR', 'TE', 'WR,TE', 'D'],
-                'Fanball': ['QB', 'RB', 'WR', 'TE', 'D', 'QB,RB', 'WR,TE,D']
-            }
-            pos = pos[ds]
-            players = list(self.players)
-            for ii in pos:
-                for jj in players:
-                    if jj.position in ii:
-                        s += str(jj) + ','
-                        players.remove(jj)
-                        break
-            s += str(players[0])+'\n'
-
-        return s
+        pos = ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE', 'RB,WR,TE', 'DST']
+        players = list(self.players)
+        for ii in pos:
+            for jj in players:
+                if jj.position in ii:
+                    s += str(jj) + ','
+                    players.remove(jj)
+                    break
+        return s + '\n'
 
     def __repr__(self):
         s = '\n'.join(str(x) for x in self.sorted_players())
