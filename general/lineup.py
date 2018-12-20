@@ -73,9 +73,18 @@ class Roster:
         return s
 
 
+POSITION_LIMITS_ = [
+    ["QB", 1, 1],
+    ["RB", 2, 3],
+    ["WR", 3, 4],
+    ["TE", 1, 2],
+    ["D", 1, 1],
+    ["RB,WR,TE", 7, 7]
+]
+               
 POSITION_LIMITS = {
     'FanDuel': [
-                   ["QB", 2, 2],
+                   ["QB", 1, 1],
                    ["RB", 2, 2],
                    ["WR", 2, 2],
                    ["TE", 2, 2],
@@ -119,8 +128,8 @@ SALARY_CAP = {
 ROSTER_SIZE = {
     'FanDuel': 9,
     'DraftKings': 9,
-    'Yahoo': 8,
-    'Fanball': 8
+    'Yahoo': 9,
+    'Fanball': 9
 }
 
 
@@ -150,7 +159,7 @@ def get_lineup(ds, players, teams, locked, max_point):
         point_cap.SetCoefficient(variables[i], player.proj_points)
 
     position_limits = POSITION_LIMITS[ds]
-    for position, min_limit, max_limit in position_limits:
+    for position, min_limit, max_limit in POSITION_LIMITS_:
         position_cap = solver.Constraint(min_limit, max_limit)
 
         for i, player in enumerate(players):

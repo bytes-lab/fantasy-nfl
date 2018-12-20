@@ -13,7 +13,7 @@ from general.views import *
 
 def get_games():
     # try:
-        url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=NFL&site=FanDuel&type=main&slate=Thu-Mon'
+        url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=NFL&site=Yahoo&type=main&slate=all'
 
         games = requests.get(url).json()
         if games:
