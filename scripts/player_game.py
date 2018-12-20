@@ -48,20 +48,19 @@ def scrape(week):
             _offset = '&offset={}'.format(offset)
             dp = url + param + _offset
             print (dp)
-            response = urllib2.urlopen(dp)
-            r = response.read()
-
-            soup = BeautifulSoup(r, "html.parser")
 
             try:
+                response = urllib2.urlopen(dp)
+                r = response.read()
+                soup = BeautifulSoup(r, "html.parser")
                 table = soup.find("table", {"id":"results"})
                 player_rows = table.find("tbody")
                 players = player_rows.find_all("tr")
                 if not players:
                     break
             except Exception as e:
-                print (e)
-                return  # no players
+                print('***', e, '***')
+                break  # no players
 
             for player in players:
                 try:
@@ -107,5 +106,5 @@ def scrape(week):
     
 
 if __name__ == "__main__":
-    for week in range(1, 15):
+    for week in range(9, 12):
         scrape(week)

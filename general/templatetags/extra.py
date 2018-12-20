@@ -33,6 +33,10 @@ def ou_ml(game, team):
         return '( {} )'.format(int(game.ou))
 
 @register.filter
+def sgr(s):
+    return s.split(' ')[0]
+
+@register.filter
 def team(opponent):
     return opponent.strip('@')
 

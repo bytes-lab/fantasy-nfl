@@ -91,7 +91,6 @@ def player_detail(request, pid):
     player = Player.objects.get(id=pid)
     year = current_season()
     games = get_games_(pid, 'all', '', year)
-    avg_min = games.aggregate(Avg('mp'))
     avg_fpts = games.aggregate(Avg('fpts'))
 
     return render(request, 'player_detail.html', locals())
