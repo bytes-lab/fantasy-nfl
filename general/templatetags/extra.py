@@ -22,10 +22,6 @@ def aya(player):
         return '0.0'
     return '{:.2f}'.format((player.pass_yds + 20 * player.pass_td  - 45 * player.pass_int) * 1.0 / player.pass_att)
 
-@register.filter
-def percent(val):
-    return val if val else '-'
-
 @register.filter()
 def liked(uid, session):
     fav = session.get('fav', [])

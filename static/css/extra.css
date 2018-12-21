@@ -25,6 +25,15 @@ th {
     cursor: pointer;
 }
 
+._r883kj3t {
+    border-top: 1px solid #ccc;
+}
+
+._r883kj3t th {
+    text-align: center;
+    border-left: 1px solid #ccc;
+}
+
 .fav-wrapper {
     position: absolute;
     bottom: 0;
@@ -149,7 +158,7 @@ table th {
 }
 
 ._ri39tj3 table th {
-    padding: .7rem 2px !important;
+    padding: .5rem 2px !important;
     font-size: 13px;
     cursor: pointer;
 }
