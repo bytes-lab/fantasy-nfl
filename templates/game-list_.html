@@ -5,7 +5,7 @@
       <table>
         <tr><th>H/A</th></tr>
         {% for ii in games %}
-        <tr><td>{% if ii.location %} {{ ii.location }} {% else %} &nbsp; {% endif %}</td></tr>
+        <tr><td>{% if ii.game_location %} {{ ii.game_location }} {% else %} &nbsp; {% endif %}</td></tr>
         {% endfor %}
       </table>
     </td>

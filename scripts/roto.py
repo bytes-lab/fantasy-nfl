@@ -11,8 +11,7 @@ from general.models import *
 from general import html2text
 
 def get_players(data_source, teams):
-    fields = ['first_name', 'last_name', 'money_line', 
-              'point_spread', 'position', 'proj_ceiling', 'opponent',
+    fields = ['point_spread', 'position', 'proj_ceiling', 'opponent', 'money_line',
               'proj_custom', 'proj_floor', 'proj_original', 'proj_points', 'proj_rotowire', 
               'proj_third_party_one', 'proj_third_party_two', 'actual_position', 
               'salary', 'team', 'team_points']
@@ -29,6 +28,9 @@ def get_players(data_source, teams):
                     defaults = { key: str(ii[key]).replace(',', '') for key in fields }
                     defaults['available'] = ii['team'] in teams
                     defaults['injury'] = html2text.html2text(ii['injury']).strip().upper()
+                    defaults['first_name'] = ii['first_name'].replace('.', '')
+                    defaults['last_name'] = ii['last_name'].replace('.', '')
+
                     Player.objects.update_or_create(uid=ii['id'], data_source=data_source, defaults=defaults)
                 break
     except:

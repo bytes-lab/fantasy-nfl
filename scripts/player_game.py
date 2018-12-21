@@ -23,23 +23,20 @@ def sync(type_, val):
     val = val.strip().strip('@')
     conv = {
         'team': {
-            'GSW': 'GS',
+            'NOR': 'NO',
+            'GNB': 'GB',
             'CHO': 'CHA',
-            'NOP': 'NO',
             'SAS': 'SA',
             'BRK': 'BKN',
             'NYK': 'NY'
         },
         'name': {
-            'Juan Hernangomez': 'Juancho Hernangomez',
-            'CJ McCollum': 'C.J. McCollum',
-            'Taurean Waller-Prince': 'Taurean Prince',
         }
     }
     return conv[type_][val] if val in conv[type_] else val
 
-def _C(val):
-    return int(val) if val else 0
+def _C(val_dict, field):
+    return float(val_dict.get(field, '0').strip() or '0')
 
 def scrape(week):
     url = "https://www.pro-football-reference.com/play-index/pgl_finder.cgi?request=1&match=game&year_min=2018&year_max=2018&season_start=1&season_end=-1&age_min=0&age_max=99&game_type=A&league_id=&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_location=&game_result=&handedness=&is_active=&is_hof=&from_link=1&"
@@ -89,29 +86,37 @@ def scrape(week):
 
                     for ii in fields:
                         field = player.find("td", {"data-stat": ii})
-                        defaults[ii] = field.text.replace('%', '') if field else None
+                        if field:
+                            defaults[ii] = field.text.replace('%', '')
 
                     defaults['team'] = sync('team', defaults['team'])
                     defaults['opp'] = sync('team', defaults['opp'])
-                    defaults['fpts'] = 0.1 * _C(defaults['rush_yds']) + 6 * _C(defaults['rush_td']) 
-                                     + 0.04 * _C(defaults['pass_yds']) + 4 * _C(defaults['pass_td'])
-                                     - _C(defaults['pass_int']) + 0.1 * _C(defaults['rec_yds'])
-                                     + 6 * _C(defaults['rec_td']) + 0.5 * _C(defaults['rec'])
 
-                    player_ = Player.objects.filter(first_name__iexact=name.split(' ')[0],
-                                                    last_name__iexact=name.split(' ')[1],
+                    first_name, last_name = parse_name(name)
+                    player_ = Player.objects.filter(first_name__iexact=first_name,
+                                                    last_name__iexact=last_name,
                                                     team=defaults['team'])
+
                     # update avatar for possible new players
                     avatar = 'https://d395i9ljze9h3x.cloudfront.net/req/20180910/images/headshots/{}_2018.jpg'.format(uid)
-                    player_.update(avatar=avatar)
+                    player_.update(avatar=avatar, gid=uid)
 
                     PlayerGame.objects.update_or_create(uid=uid, date=date, defaults=defaults)
-                except (Exception) as e:
-                    print defaults
-                    print (e)
+                except Exception as e:
+                    print(defaults)
+                    print('------------------------------')
+                    print(e)
             offset += 100
     
 
 if __name__ == "__main__":
-    for week in range(9, 12):
+    for week in range(9, 10):
         scrape(week)
+
+    for ii in PlayerGame.objects.all():
+        if ii.created_at == ii.updated_at:            
+            fpts = 0.1 * ii.rush_yds + 6 * ii.rush_td + 0.04 * ii.pass_yds + 4 * ii.pass_td - ii.pass_int \
+                 + 0.1 * ii.rec_yds + 6 * ii.rec_td + 0.5 * ii.rec
+            ii.fpts = fpts
+            ii.save()
+            print (ii)

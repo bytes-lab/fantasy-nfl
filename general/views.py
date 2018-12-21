@@ -71,7 +71,7 @@ def get_players(request):
 
 def get_games_(pid, loc, opp, season):
     player = Player.objects.get(id=pid)
-    q = Q(name='{} {}'.format(player.first_name, player.last_name)) \
+    q = Q(uid=player.gid) \
       & Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
 
     if opp:

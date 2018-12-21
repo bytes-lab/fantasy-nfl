@@ -12,6 +12,13 @@ DATA_SOURCE = (
     ('Fanball', 'Fanball')
 )
 
+def parse_name(name):
+    # get first and last name from name string after processing
+    name = name.strip().replace('.', '')
+    name_ = name.split(' ')
+    if len(name_) > 1:
+        return name_[0], ' '.join(name_[1:])
+    return name, ''
 
 class Player(models.Model):
     uid = models.IntegerField()
@@ -20,6 +27,7 @@ class Player(models.Model):
     avatar = models.CharField(max_length=250, default="/static/img/default.ico")
     injury = models.CharField(max_length=250, blank=True, null=True)
     opponent = models.CharField(max_length=50)
+    gid = models.CharField(max_length=50, blank=True, null=True)
     
     minutes = models.FloatField(default=0)              # ampg
     money_line = models.IntegerField(default=0)
@@ -69,6 +77,7 @@ class PlayerGame(models.Model):
     pass_int = models.IntegerField(default=0)
     pass_rating = models.FloatField(default=0)
     pass_sacked = models.IntegerField(default=0)
+    pass_long = models.IntegerField(default=0)
     pass_sacked_yds = models.IntegerField(default=0)
     pass_yds_per_att = models.FloatField(default=0)
     pass_adj_yds_per_att = models.FloatField(default=0)
@@ -76,23 +85,24 @@ class PlayerGame(models.Model):
     rush_yds = models.IntegerField(default=0)
     rush_yds_per_att = models.FloatField(null=True, blank=True)
     rush_td = models.IntegerField(default=0)
+    rush_long = models.IntegerField(default=0)
     targets = models.IntegerField(default=0)
     rec = models.IntegerField(default=0)
     rec_yds = models.IntegerField(default=0)
     rec_yds_per_rec = models.FloatField(null=True, blank=True)
     rec_td = models.IntegerField(default=0)
+    rec_long = models.IntegerField(default=0)
     catch_pct = models.FloatField(default=0)
     rec_yds_per_tgt = models.FloatField(null=True, blank=True)
-    all_td = models.IntegerField(default=0)
     fumbles = models.IntegerField(default=0)
-    fumbles_forced = models.IntegerField(default=0)
-    fumbles_rec = models.IntegerField(default=0)
-    fumbles_rec_yds = models.IntegerField(default=0)
-    fumbles_rec_td = models.IntegerField(null=True, blank=True)
+    fumbles_lost = models.IntegerField(default=0)
     week_num = models.IntegerField()
 
     date = models.DateField()
     fpts = models.FloatField("FPTS", default=-1)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
