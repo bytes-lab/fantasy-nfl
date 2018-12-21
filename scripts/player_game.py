@@ -5,10 +5,12 @@ import urllib2
 
 from bs4 import BeautifulSoup
 
+import re
 import os
 from os import sys, path
 import django
-import pdb
+from django.db.models import Q
+
 
 import datetime
 
@@ -25,10 +27,10 @@ def sync(type_, val):
         'team': {
             'NOR': 'NO',
             'GNB': 'GB',
-            'CHO': 'CHA',
-            'SAS': 'SA',
-            'BRK': 'BKN',
-            'NYK': 'NY'
+            'SFO': 'SF',
+            'TAM': 'TB',
+            'NWE': 'NE',
+            'KAN': 'KC'
         },
         'name': {
         }
@@ -39,84 +41,94 @@ def _C(val_dict, field):
     return float(val_dict.get(field, '0').strip() or '0')
 
 def scrape(week):
-    url = "https://www.pro-football-reference.com/play-index/pgl_finder.cgi?request=1&match=game&year_min=2018&year_max=2018&season_start=1&season_end=-1&age_min=0&age_max=99&game_type=A&league_id=&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_location=&game_result=&handedness=&is_active=&is_hof=&from_link=1&"
+    url = 'https://www.pro-football-reference.com/years/2018/week_{}.htm'.format(week)
+    print "||" + url
+    response = urllib2.urlopen(url)
+    r = response.read()
+    soup = BeautifulSoup(r, "html.parser")
+    links = []
+    for ii in soup.find_all("td", {"class": "right gamelink"}):
+        link = ii.find('a').get('href')
+        links.append(link)
 
-    for type_ in ['pass_att', 'rush_att', 'rec']:
-        param = "week_num_min={0}&week_num_max={0}&game_day_of_week=&c1stat={1}&c1comp=gt&c1val=1&c2stat=&c2comp=gt&c2val=&c3stat=&c3comp=gt&c3val=&c4stat=&c4comp=gt&c4val=&order_by=age".format(week, type_)
-        offset = 0
-        while True:
-            _offset = '&offset={}'.format(offset)
-            dp = url + param + _offset
-            print (dp)
+    for game_link in links:
+        url = 'https://www.pro-football-reference.com' + game_link
+        print "|| - " + url
+        response = urllib2.urlopen(url)
+        body = response.read()
 
-            try:
-                response = urllib2.urlopen(dp)
-                r = response.read()
-                soup = BeautifulSoup(r, "html.parser")
-                table = soup.find("table", {"id":"results"})
-                player_rows = table.find("tbody")
-                players = player_rows.find_all("tr")
-                if not players:
-                    break
-            except Exception as e:
-                print('***', e, '***')
-                break  # no players
+        soup = BeautifulSoup(body, "html.parser")
+        game_results = soup.find_all("div", {"class": "score"})
+        home_score = int(game_results[0].text.strip())
+        away_score = int(game_results[1].text.strip())
 
-            for player in players:
-                try:
-                    if player.get('class'): # ignore header
-                        continue
+        tbl_text = body.split('<div class="overthrow table_container" id="div_player_offense">')[1].split('</div>')[0]
+        soup = BeautifulSoup(tbl_text, "html.parser")
+        table = soup.find("table", {"id":"player_offense"})
+        player_rows = table.find("tbody")
+        players = player_rows.find_all("tr")
 
-                    name = player.find("td", {"data-stat":"player"}).text.strip()
-                    name = sync('name', name)
-                    game_date = player.find("td", {"data-stat":"game_date"}).text            
-                    date = datetime.datetime.strptime(game_date, '%Y-%m-%d')
-                    uid = player.find("td", {"data-stat":"player"}).get('data-append-csv')
+        home_team = sync('team', players[-1].find("td", {"data-stat":"team"}).text.strip())
+        away_team = sync('team', players[0].find("td", {"data-stat":"team"}).text.strip())
 
-                    defaults = {
-                        'name': name,
-                        'week_num': week
-                    }
+        game_info = {
+            home_team: [away_team, '', 'W' if home_score > away_score else 'T' if home_score == away_score else 'L'],
+            away_team: [home_team, '@', 'L' if home_score > away_score else 'T' if home_score == away_score else 'W']
+        }
 
-                    fields = ['team', 'game_location', 'opp', 'game_result', 'pos', 'pass_cmp', 'pass_att', 'pass_cmp_perc', 
-                              'pass_yds', 'pass_td', 'pass_td', 'pass_int', 'pass_rating', 'pass_sacked', 'pass_sacked_yds', 
-                              'pass_yds_per_att', 'pass_adj_yds_per_att', 'rush_att', 'rush_yds', 'rush_yds_per_att', 'rush_td', 
-                              'targets', 'rec', 'rec_yds', 'rec_yds_per_rec', 'rec_td', 'catch_pct', 'rec_yds_per_tgt', 'all_td', 
-                              'fumbles', 'fumbles_forced', 'fumbles_rec', 'fumbles_rec_yds', 'fumbles_rec_td']
+        for player in players:
+            # try:
+                if player.get('class'): # ignore header
+                    continue
 
-                    for ii in fields:
-                        field = player.find("td", {"data-stat": ii})
-                        if field:
-                            defaults[ii] = field.text.replace('%', '')
+                name = player.find("th", {"data-stat":"player"}).text.strip()
+                name = sync('name', name)
+                game_date = game_link[11:19]
+                date = datetime.datetime.strptime(game_date, '%Y%m%d')
+                uid = player.find("th", {"data-stat":"player"}).get('data-append-csv')
 
-                    defaults['team'] = sync('team', defaults['team'])
-                    defaults['opp'] = sync('team', defaults['opp'])
+                defaults = {
+                    'name': name,
+                    'week_num': week
+                }
 
-                    first_name, last_name = parse_name(name)
-                    player_ = Player.objects.filter(first_name__iexact=first_name,
-                                                    last_name__iexact=last_name,
-                                                    team=defaults['team'])
+                fields = ['team', 'pass_cmp', 'pass_att', 'pass_yds', 'pass_td', 'pass_int', 'pass_rating', 'pass_sacked', 
+                          'pass_sacked_yds', 'pass_long', 'rush_att', 'rush_yds', 'rush_td', 'rush_long', 
+                          'targets', 'rec', 'rec_yds', 'rec_td', 'rec_long', 'fumbles', 'fumbles_lost']
 
+                for ii in fields:
+                    field = player.find("td", {"data-stat": ii}).text.replace('%', '').strip()
+                    if field:
+                        defaults[ii] = field
+
+                defaults['team'] = sync('team', defaults['team'])
+                defaults['opp'] = game_info[defaults['team']][0]
+                defaults['game_location'] = game_info[defaults['team']][1]
+                defaults['game_result'] = game_info[defaults['team']][2]
+                defaults['fpts'] = 0.1 * _C(defaults, 'rush_yds') + 6 * _C(defaults, 'rush_td') \
+                                 + 0.04 * _C(defaults, 'pass_yds') + 4 * _C(defaults, 'pass_td') \
+                                 - _C(defaults, 'pass_int') + 0.1 * _C(defaults, 'rec_yds') \
+                                 + 6 * _C(defaults, 'rec_td') + 0.5 * _C(defaults, 'rec')                
+
+                first_name, last_name = parse_name(name)
+                q = Q(first_name__iexact=first_name) & Q(last_name__iexact=last_name)
+                if name == 'Ryan Griffin':
+                    q &= Q(team=defaults['team'])
+                player_ = Player.objects.filter(q)
+                if player_:
+                    defaults['pos'] = player_.first().position
                     # update avatar for possible new players
                     avatar = 'https://d395i9ljze9h3x.cloudfront.net/req/20180910/images/headshots/{}_2018.jpg'.format(uid)
                     player_.update(avatar=avatar, gid=uid)
-
-                    PlayerGame.objects.update_or_create(uid=uid, date=date, defaults=defaults)
-                except Exception as e:
-                    print(defaults)
-                    print('------------------------------')
-                    print(e)
-            offset += 100
-    
+                else:
+                    print name, defaults['team'], date, '=================='
+                # print(defaults)
+                PlayerGame.objects.update_or_create(uid=uid, date=date, defaults=defaults)
+            # except Exception as e:
+                # print(defaults)
+                # print('------------------------------')
+                # print(e)
 
 if __name__ == "__main__":
-    for week in range(9, 10):
+    for week in range(2, 5):
         scrape(week)
-
-    for ii in PlayerGame.objects.all():
-        if ii.created_at == ii.updated_at:            
-            fpts = 0.1 * ii.rush_yds + 6 * ii.rush_td + 0.04 * ii.pass_yds + 4 * ii.pass_td - ii.pass_int \
-                 + 0.1 * ii.rec_yds + 6 * ii.rec_td + 0.5 * ii.rec
-            ii.fpts = fpts
-            ii.save()
-            print (ii)

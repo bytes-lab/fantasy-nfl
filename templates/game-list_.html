@@ -45,7 +45,7 @@
       <table>
         <tr><th class="num">Cmp%</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pass_cmp_perc }}</td></tr>
+        <tr><td>{{ ii.pass_cmp|div_pcnt:ii.pass_att }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -102,7 +102,7 @@
       <table>
         <tr><th class="num">Y/A</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pass_yds_per_att|percent }}</td></tr>
+        <tr><td>{{ ii.pass_yds|div:ii.pass_att }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -110,7 +110,7 @@
       <table>
         <tr><th class="num">AY/A</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pass_adj_yds_per_att }}</td></tr>
+        <tr><td>{{ ii|aya }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -134,7 +134,7 @@
       <table>
         <tr><th class="num">Y/A</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.rush_yds_per_att|percent }}</td></tr>
+        <tr><td>{{ ii.rush_yds|div:ii.rush_att }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -174,7 +174,7 @@
       <table>
         <tr><th class="num">Y/R</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.rec_yds_per_rec|percent }}</td></tr>
+        <tr><td>{{ ii.rec_yds|div:ii.rec }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -190,7 +190,7 @@
       <table>
         <tr><th class="num">Ctch%</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.catch_pct }}</td></tr>
+        <tr><td>{{ ii.rec|div_pcnt:ii.targets }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -198,7 +198,7 @@
       <table>
         <tr><th class="num">Y/Tgt</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.rec_yds_per_tgt|percent }}</td></tr>
+        <tr><td>{{ ii.rec_yds|div:ii.targets }}</td></tr>
         {% endfor %}
       </table>
     </td>
