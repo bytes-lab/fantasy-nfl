@@ -25,13 +25,17 @@ th {
     cursor: pointer;
 }
 
-._r883kj3t {
-    border-top: 1px solid #ccc;
-}
-
 ._r883kj3t th {
+    border-top: 1px solid #ccc !important;
     text-align: center;
     border-left: 1px solid #ccc;
+    background-color: #eee;
+}
+
+._r883kj3t th:first-child {
+    text-align: center;
+    border: none !important;
+    background-color: #fff;
 }
 
 .fav-wrapper {
