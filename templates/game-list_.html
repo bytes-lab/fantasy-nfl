@@ -1,21 +1,13 @@
 {% load extra %}
 <table class="table table-responsive-md" onmouseup="getStats()">
   <tr class="_r883kj3t">
-    <th colspan="4"></th>
+    <th colspan="3"></th>
     <th colspan="11">Passing</th>
     <th colspan="4">Rushing</th>
     <th colspan="7">Receiving</th>
     <th colspan="2" style="border-right: 1px solid #ccc;">Fumbles</th>
   </tr>
   <tr>
-    <td>
-      <table>
-        <tr><th>Date</th></tr>
-        {% for ii in games %}
-        <tr><td>{{ ii.date|date:'m/d/Y' }}</td></tr>
-        {% endfor %}
-      </table>
-    </td>
     <td>
       <table>
         <tr><th>H/A</th></tr>
@@ -238,6 +230,14 @@
         <tr><th class="num">FPTS</th></tr>
         {% for ii in games %}
         <tr><td>{{ ii.fpts }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th>Date</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.date|date:'m/d/Y' }}</td></tr>
         {% endfor %}
       </table>
     </td>
