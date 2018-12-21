@@ -72,7 +72,7 @@ def get_players(request):
 def get_games_(pid, loc, opp, season):
     player = Player.objects.get(id=pid)
     q = Q(name='{} {}'.format(player.first_name, player.last_name)) \
-      & Q(date__range=[datetime.date(season, 10, 1), datetime.date(season+1, 6, 30)])
+      & Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
 
     if opp:
         q &= Q(opp=opp)
@@ -84,7 +84,7 @@ def get_games_(pid, loc, opp, season):
 
 def current_season():
     today = datetime.date.today()
-    return today.year if today > datetime.date(today.year, 10, 17) else today.year - 1
+    return today.year if today > datetime.date(today.year, 9, 1) else today.year - 1
 
 
 def player_detail(request, pid):
@@ -153,7 +153,7 @@ def get_team_games(team):
 
     season = current_season()
     q = Q(name__in=players_) & \
-        Q(date__range=[datetime.date(season, 10, 1), datetime.date(season+1, 6, 30)])
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
 
     return PlayerGame.objects.filter(q)
 
@@ -163,7 +163,7 @@ def get_team_stat(team, loc):
     # allowance
     season = current_season()
     q = Q(opp=team) & Q(location=loc_) & \
-        Q(date__range=[datetime.date(season, 10, 1), datetime.date(season+1, 6, 30)])
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     a_teams = PlayerGame.objects.filter(q)
     a_teams_ = a_teams.values('date').annotate(trb=Sum('trb'), 
                                                ast=Sum('ast'),
@@ -181,7 +181,7 @@ def get_team_stat(team, loc):
 
     # score
     q = Q(team=team) & Q(location=loc) & \
-        Q(date__range=[datetime.date(season, 10, 1), datetime.date(season+1, 6, 30)])
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     s_teams = PlayerGame.objects.filter(q)
     s_teams_ = s_teams.values('date').annotate(trb=Sum('trb'), 
                                                ast=Sum('ast'),
@@ -279,7 +279,7 @@ def get_player(full_name, team):
 def get_win_loss(team):
     season = current_season()
     q = Q(team=team) & \
-        Q(date__range=[datetime.date(season, 10, 1), datetime.date(season+1, 6, 30)])
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
 
     team_games = PlayerGame.objects.filter(q)
     game_results = team_games.values('date', 'game_result').distinct()

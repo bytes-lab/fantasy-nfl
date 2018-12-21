@@ -66,7 +66,6 @@ class PlayerGame(models.Model):
     pass_cmp_perc = models.FloatField(default=0)
     pass_yds = models.IntegerField(default=0)
     pass_td = models.IntegerField(default=0)
-    pass_td = models.IntegerField(default=0)
     pass_int = models.IntegerField(default=0)
     pass_rating = models.FloatField(default=0)
     pass_sacked = models.IntegerField(default=0)

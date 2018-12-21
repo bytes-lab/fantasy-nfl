@@ -53,7 +53,7 @@
       <table>
         <tr><th class="num">Yds</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.fg_pct|percent }}</td></tr>
+        <tr><td>{{ ii.pass_yds }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -61,15 +61,7 @@
       <table>
         <tr><th class="num">TD</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.fg3 }}</td></tr>
-        {% endfor %}
-      </table>
-    </td>
-    <td>
-      <table>
-        <tr><th class="num">3PA</th></tr>
-        {% for ii in games %}
-        <tr><td>{{ ii.fg3a }}</td></tr>
+        <tr><td>{{ ii.pass_td }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -77,7 +69,7 @@
       <table>
         <tr><th class="num">Int</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.fg3_pct|percent }}</td></tr>
+        <tr><td>{{ ii.pass_int }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -85,7 +77,7 @@
       <table>
         <tr><th class="num">Rate</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.ft }}</td></tr>
+        <tr><td>{{ ii.pass_rating }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -93,7 +85,7 @@
       <table>
         <tr><th class="num">Sk</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.fta }}</td></tr>
+        <tr><td>{{ ii.pass_sacked }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -102,7 +94,7 @@
       <table>
         <tr><th class="num">Yds</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.ft_pct|percent }}</td></tr>
+        <tr><td>{{ ii.pass_sacked_yds }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -110,7 +102,7 @@
       <table>
         <tr><th class="num">Y/A</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.trb }}</td></tr>
+        <tr><td>{{ ii.pass_yds_per_att|percent }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -118,7 +110,7 @@
       <table>
         <tr><th class="num">AY/A</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.ast }}</td></tr>
+        <tr><td>{{ ii.pass_adj_yds_per_att }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -126,7 +118,7 @@
       <table>
         <tr><th class="num">Rush</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.stl }}</td></tr>
+        <tr><td>{{ ii.rush_att }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -134,7 +126,7 @@
       <table>
         <tr><th class="num">Yds</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.blk }}</td></tr>
+        <tr><td>{{ ii.rush_yds }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -142,7 +134,7 @@
       <table>
         <tr><th class="num">Y/A</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.tov }}</td></tr>
+        <tr><td>{{ ii.rush_yds_per_att|percent }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -150,7 +142,7 @@
       <table>
         <tr><th class="num">TD</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pf }}</td></tr>
+        <tr><td>{{ ii.rush_td }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -158,7 +150,7 @@
       <table>
         <tr><th class="num">Tgt</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.targets }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -166,7 +158,7 @@
       <table>
         <tr><th class="num">Rec</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.rec }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -174,7 +166,7 @@
       <table>
         <tr><th class="num">Yds</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.rec_yds }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -182,7 +174,7 @@
       <table>
         <tr><th class="num">Y/R</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.rec_yds_per_rec|percent }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -190,7 +182,7 @@
       <table>
         <tr><th class="num">TD</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.rec_td }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -198,7 +190,7 @@
       <table>
         <tr><th class="num">Ctch%</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.catch_pct }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -206,7 +198,7 @@
       <table>
         <tr><th class="num">Y/Tgt</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.rec_yds_per_tgt|percent }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -214,7 +206,7 @@
       <table>
         <tr><th class="num">TD</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.all_td }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -222,7 +214,7 @@
       <table>
         <tr><th class="num">Fmb</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.fumbles }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -230,7 +222,7 @@
       <table>
         <tr><th class="num">FF</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.fumbles_forced }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -238,7 +230,7 @@
       <table>
         <tr><th class="num">FR</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.fumbles_rec }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -246,7 +238,7 @@
       <table>
         <tr><th class="num">Yds</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.fumbles_rec_yds }}</td></tr>
         {% endfor %}
       </table>
     </td>
@@ -254,7 +246,7 @@
       <table>
         <tr><th class="num">TD</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.pts }}</td></tr>
+        <tr><td>{{ ii.fumbles_rec_td|percent }}</td></tr>
         {% endfor %}
       </table>
     </td>

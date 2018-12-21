@@ -143,6 +143,17 @@ table th {
     cursor: pointer;
 }
 
+._ri39tj3 table td {
+    padding: .4rem 6px !important;
+    font-size: 13px;
+}
+
+._ri39tj3 table th {
+    padding: .7rem 2px !important;
+    font-size: 13px;
+    cursor: pointer;
+}
+
 .player-list {
     max-height: calc(100vh - 285px) !important; 
 }

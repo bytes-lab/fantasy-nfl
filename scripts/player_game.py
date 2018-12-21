@@ -38,6 +38,9 @@ def sync(type_, val):
     }
     return conv[type_][val] if val in conv[type_] else val
 
+def _C(val):
+    return int(val) if val else 0
+
 def scrape(week):
     url = "https://www.pro-football-reference.com/play-index/pgl_finder.cgi?request=1&match=game&year_min=2018&year_max=2018&season_start=1&season_end=-1&age_min=0&age_max=99&game_type=A&league_id=&team_id=&opp_id=&game_num_min=0&game_num_max=99&game_location=&game_result=&handedness=&is_active=&is_hof=&from_link=1&"
 
@@ -90,6 +93,10 @@ def scrape(week):
 
                     defaults['team'] = sync('team', defaults['team'])
                     defaults['opp'] = sync('team', defaults['opp'])
+                    defaults['fpts'] = 0.1 * _C(defaults['rush_yds']) + 6 * _C(defaults['rush_td']) 
+                                     + 0.04 * _C(defaults['pass_yds']) + 4 * _C(defaults['pass_td'])
+                                     - _C(defaults['pass_int']) + 0.1 * _C(defaults['rec_yds'])
+                                     + 6 * _C(defaults['rec_td']) + 0.5 * _C(defaults['rec'])
 
                     player_ = Player.objects.filter(first_name__iexact=name.split(' ')[0],
                                                     last_name__iexact=name.split(' ')[1],
