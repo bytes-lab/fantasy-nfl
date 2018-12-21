@@ -204,14 +204,6 @@
     </td>
     <td>
       <table>
-        <tr><th class="num">TD</th></tr>
-        {% for ii in games %}
-        <tr><td>{{ ii.all_td }}</td></tr>
-        {% endfor %}
-      </table>
-    </td>
-    <td>
-      <table>
         <tr><th class="num">Fmb</th></tr>
         {% for ii in games %}
         <tr><td>{{ ii.fumbles }}</td></tr>
@@ -220,33 +212,9 @@
     </td>
     <td>
       <table>
-        <tr><th class="num">FF</th></tr>
+        <tr><th class="num">FL</th></tr>
         {% for ii in games %}
-        <tr><td>{{ ii.fumbles_forced }}</td></tr>
-        {% endfor %}
-      </table>
-    </td>
-    <td>
-      <table>
-        <tr><th class="num">FR</th></tr>
-        {% for ii in games %}
-        <tr><td>{{ ii.fumbles_rec }}</td></tr>
-        {% endfor %}
-      </table>
-    </td>
-    <td>
-      <table>
-        <tr><th class="num">Yds</th></tr>
-        {% for ii in games %}
-        <tr><td>{{ ii.fumbles_rec_yds }}</td></tr>
-        {% endfor %}
-      </table>
-    </td>
-    <td>
-      <table>
-        <tr><th class="num">TD</th></tr>
-        {% for ii in games %}
-        <tr><td>{{ ii.fumbles_rec_td|percent }}</td></tr>
+        <tr><td>{{ ii.fumbles_lost }}</td></tr>
         {% endfor %}
       </table>
     </td>
