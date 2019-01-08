@@ -17,7 +17,7 @@ def get_players(data_source, teams):
               'salary', 'team', 'team_points']
 
     try:
-        slates = ['Thu-Mon', 'Sat-Mon'] if data_source in ['FanDuel', 'DraftKings'] else ['all']
+        slates = ['Thu-Mon', 'Sat-Mon', 'Sat-Sun', 'all'] if data_source in ['FanDuel', 'DraftKings'] else ['all']
         for slate in slates:
             url = 'https://www.rotowire.com/daily/tables/optimizer-nfl.php?sport=NFL&' + \
                   'site={}&projections=&type=main&slate={}'.format(data_source, slate)
