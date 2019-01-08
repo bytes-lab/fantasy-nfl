@@ -110,18 +110,6 @@ def scrape(week):
                                  - _C(defaults, 'pass_int') + 0.1 * _C(defaults, 'rec_yds') \
                                  + 6 * _C(defaults, 'rec_td') + 0.5 * _C(defaults, 'rec')                
 
-                first_name, last_name = parse_name(name)
-                q = Q(first_name__iexact=first_name) & Q(last_name__iexact=last_name)
-                if name == 'Ryan Griffin':
-                    q &= Q(team=defaults['team'])
-                player_ = Player.objects.filter(q)
-                if player_:
-                    defaults['pos'] = player_.first().position
-                    # update avatar for possible new players
-                    avatar = 'https://d395i9ljze9h3x.cloudfront.net/req/20180910/images/headshots/{}_2018.jpg'.format(uid)
-                    player_.update(avatar=avatar, gid=uid)
-                else:
-                    print name, defaults['team'], date, '=================='
                 # print(defaults)
                 PlayerGame.objects.update_or_create(uid=uid, date=date, defaults=defaults)
             # except Exception as e:

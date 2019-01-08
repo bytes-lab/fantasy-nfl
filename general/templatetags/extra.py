@@ -36,6 +36,13 @@ def hot_sfp(player):
     else:
         return '' 
 
+@register.filter 
+def avatar(player):
+    if player.eid != -1:
+        return 'http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{}.png'.format(player.eid)
+    else:
+        return '/static/img/default.ico'
+
 @register.filter
 def ou_ml(game, team):
     if not game.ml:

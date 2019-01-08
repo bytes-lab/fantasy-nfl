@@ -77,7 +77,7 @@ def get_games_(pid, loc, opp, season):
     if opp:
         q &= Q(opp=opp)
     if loc != 'all':
-        q &= Q(location=loc)
+        q &= Q(game_location=loc)
 
     return PlayerGame.objects.filter(q).order_by('-date')
 
@@ -162,7 +162,7 @@ def get_team_stat(team, loc):
     loc_ = '@' if loc == '' else ''
     # allowance
     season = current_season()
-    q = Q(opp=team) & Q(location=loc_) & \
+    q = Q(opp=team) & Q(game_location=loc_) & \
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     a_teams = PlayerGame.objects.filter(q)
     a_teams_ = a_teams.values('date').annotate(trb=Sum('trb'), 
@@ -180,7 +180,7 @@ def get_team_stat(team, loc):
     ppg = a_teams_.aggregate(Avg('pts'))['pts__avg'] or 0
 
     # score
-    q = Q(team=team) & Q(location=loc) & \
+    q = Q(team=team) & Q(game_location=loc) & \
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     s_teams = PlayerGame.objects.filter(q)
     s_teams_ = s_teams.values('date').annotate(trb=Sum('trb'), 
@@ -232,7 +232,7 @@ def get_team_stat(team, loc):
             tm_pos_[pos] = players.filter(name__in=players_).aggregate(Sum('fpts'))['fpts__sum'] or 0
         if tm_pos_['PG'] > 0 and tm_pos_['SG'] > 0:
             tm_pos.append(tm_pos_)
-        print ii['date'], players[0].team, players[0].opp, players[0].location, tm_pos_
+        print ii['date'], players[0].team, players[0].opp, players[0].game_location, tm_pos_
         
     for pos in POSITION:
         res[pos] = sum(ii[pos] for ii in tm_pos) / len(tm_pos) if len(tm_pos) else -1
@@ -255,7 +255,7 @@ def get_team_stat(team, loc):
             tm_pos_[pos] = players.filter(name__in=players_).aggregate(Sum('fpts'))['fpts__sum'] or 0
         if tm_pos_['PG'] > 0 and tm_pos_['SG'] > 0:
             tm_pos.append(tm_pos_)
-        print ii['date'], players[0].team, players[0].opp, players[0].location, tm_pos_
+        print ii['date'], players[0].team, players[0].opp, players[0].game_location, tm_pos_
     print '----------------------------'
     for pos in POSITION:
         res['s_'+pos] = sum(ii[pos] for ii in tm_pos) / len(tm_pos) if len(tm_pos) else -1
@@ -302,7 +302,7 @@ def get_team_info(team, loc):
     for ii in players_:
         player = get_player(ii['name'], ii['team'])
         if player:
-            games = team_games.filter(name=ii['name'], location=loc)
+            games = team_games.filter(name=ii['name'], game_location=loc)
             ampg = games.aggregate(Avg('mp'))['mp__avg']
             afp = games.aggregate(Avg('fpts'))['fpts__avg']
 
@@ -388,9 +388,9 @@ def build_player_cache():
     for player in players:
         games = get_games_(player.id, 'all', '', current_season())
         ampg = games.aggregate(Avg('mp'))['mp__avg'] or 0
-        smpg = games.filter(location=game_info[player.team]).aggregate(Avg('mp'))['mp__avg'] or 0
+        smpg = games.filter(game_location=game_info[player.team]).aggregate(Avg('mp'))['mp__avg'] or 0
         afp = games.aggregate(Avg('fpts'))['fpts__avg'] or 0
-        sfp = games.filter(location=game_info[player.team]).aggregate(Avg('fpts'))['fpts__avg'] or 0
+        sfp = games.filter(game_location=game_info[player.team]).aggregate(Avg('fpts'))['fpts__avg'] or 0
 
         Player.objects.filter(uid=player.uid).update(
             minutes=ampg,

@@ -5,10 +5,15 @@
 <div class="offset-md-1 col-md-10">
   <div class="row">
     <div class="col-md-4">
-      <div class="mr-3 float-left" style="height: 200px;">
-        <img src="{{ player.avatar }}" width="120" style="clip-path: inset(0 0 15px 0);">
+      <div class="mr-3 float-left text-center _g49ijf">
+        {% if player.eid != -1 %}
+          <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ player.eid }}.png" height="200" class="avatar-lg">
+        {% else %}
+          <img src="/static/img/default.ico" width="120" class="mx-2 mb-1">
+        {% endif %}
+
         <div class="clearfix"></div>
-        <a class="ml-5" href="javascript:history.go(-1);">Back</a>
+        <a href="javascript:history.go(-1);">Back</a>
       </div>
       <h3>{{ player.first_name }} {{ player.last_name }} <br><small class="text-secondary">{{ player.position }}&nbsp;&nbsp;<i class="far fa-thumbs-up fav {{ player.uid|liked:request.session }}" data-uid="{{ player.uid }}"></i></small></h3>
 

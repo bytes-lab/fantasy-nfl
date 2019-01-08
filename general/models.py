@@ -22,6 +22,7 @@ def parse_name(name):
 
 class Player(models.Model):
     uid = models.IntegerField()
+    eid = models.IntegerField(default=-1)               # espn id
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     avatar = models.CharField(max_length=250, default="/static/img/default.ico")
