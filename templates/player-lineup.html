@@ -19,7 +19,12 @@
           <tr>
             <td>
               <a href="/players/{{ ii.id }}">
-                <img src="{{ ii.avatar }}" height="30" class="mr-2">{{ ii.name }}
+                {% if ii.eid != -1 %}
+                  <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ ii.eid }}.png" height="26" class="avatar-sm">
+                {% else %}
+                  <img src="/static/img/default.ico" height="26" class="mr-2">
+                {% endif %}
+                {{ ii.name }}
               </a>
             </td>
             <td>{{ ii.team }}</td>
