@@ -26,7 +26,7 @@ def sync(type_, val):
     return conv[type_][val] if val in conv[type_] else val
 
 def get_avatars(teams):
-    for team in ['HOU']:    # teams
+    for team in teams:
         # try:
             url = 'http://site.web.api.espn.com/apis/site/v2/sports/football/nfl/teams/{}/roster'.format(sync("team", team).lower())
             print "======================", url
