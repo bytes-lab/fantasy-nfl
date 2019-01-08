@@ -29,6 +29,7 @@ class Player(models.Model):
     injury = models.CharField(max_length=250, blank=True, null=True)
     opponent = models.CharField(max_length=50)
     gid = models.CharField(max_length=50, blank=True, null=True)
+    exp = models.IntegerField(default=0)                # for exceptional avatar
     
     minutes = models.FloatField(default=0)              # ampg
     money_line = models.IntegerField(default=0)

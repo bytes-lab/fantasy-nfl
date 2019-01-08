@@ -7,7 +7,11 @@
     <div class="col-md-4">
       <div class="mr-3 float-left text-center _g49ijf">
         {% if player.eid != -1 %}
-          <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ player.eid }}.png" height="200" class="avatar-lg">
+          {% if player.exp != 0 %}
+            <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ player.eid }}.png" height="240" class="avatar-lg-{{ player.exp }}">
+          {% else %}
+            <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ player.eid }}.png" height="200" class="avatar-lg">
+          {% endif %}
         {% else %}
           <img src="/static/img/default.ico" width="120" class="mx-2 mb-1">
         {% endif %}

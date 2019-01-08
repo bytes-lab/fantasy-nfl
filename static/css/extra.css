@@ -53,6 +53,11 @@ th {
     margin: 0 -55px -20px;
 }
 
+.avatar-lg-1 {
+    clip-path: inset(0 90px 52px 90px);
+    margin: 0 -80px -45px;
+}
+
 .fav-wrapper {
     position: absolute;
     bottom: 0;
