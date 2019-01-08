@@ -513,6 +513,7 @@ def gen_lineups(request):
     players_ = [{ 'name': '{} {}'.format(ii.first_name, ii.last_name), 
                   'team': ii.team, 
                   'id': ii.id, 
+                  'eid': ii.eid, 
                   'avatar': ii.avatar, 
                   'lineups': get_num_lineups(ii, lineups)} 
                 for ii in players if get_num_lineups(ii, lineups)]
