@@ -118,5 +118,5 @@ def scrape(week):
                 # print(e)
 
 if __name__ == "__main__":
-    for week in range(2, 5):
+    for week in range(15, 18):
         scrape(week)
