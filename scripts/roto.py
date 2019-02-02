@@ -22,7 +22,7 @@ def get_players(data_source, teams):
             url = 'https://www.rotowire.com/daily/tables/optimizer-nfl.php?sport=NFL&' + \
                   'site={}&projections=&type=main&slate={}'.format(data_source, slate)
             players = requests.get(url).json()
-            if len(players) > 100:
+            if len(players) > 10:
                 print data_source, len(players)
                 for ii in players:
                     defaults = { key: str(ii[key]).replace(',', '') for key in fields }
