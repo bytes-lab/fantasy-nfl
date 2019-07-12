@@ -230,8 +230,10 @@ def get_team_stat(team, loc):
             players_ = Player.objects.filter(Q(team=players[0].team) & q)
             players_ = ['{} {}'.format(ip.first_name, ip.last_name) for ip in players_]
             tm_pos_[pos] = players.filter(name__in=players_).aggregate(Sum('fpts'))['fpts__sum'] or 0
+
         if tm_pos_['PG'] > 0 and tm_pos_['SG'] > 0:
             tm_pos.append(tm_pos_)
+
         print ii['date'], players[0].team, players[0].opp, players[0].game_location, tm_pos_
         
     for pos in POSITION:
@@ -253,8 +255,10 @@ def get_team_stat(team, loc):
             players_ = Player.objects.filter(Q(team=players[0].team) & q)
             players_ = ['{} {}'.format(ip.first_name, ip.last_name) for ip in players_]
             tm_pos_[pos] = players.filter(name__in=players_).aggregate(Sum('fpts'))['fpts__sum'] or 0
+
         if tm_pos_['PG'] > 0 and tm_pos_['SG'] > 0:
             tm_pos.append(tm_pos_)
+
         print ii['date'], players[0].team, players[0].opp, players[0].game_location, tm_pos_
     print '----------------------------'
     for pos in POSITION:
@@ -407,9 +411,7 @@ def player_match_up(request):
     pos = '' if pos == 'All' else pos
     ds = request.POST.get('ds')
     min_afp = float(request.POST.get('min_afp'))
-    min_sfp = float(request.POST.get('min_sfp'))
     max_afp = float(request.POST.get('max_afp'))
-    max_sfp = float(request.POST.get('max_sfp'))
     games = request.POST.get('games').strip(';').split(';')
 
     game_info = {}
@@ -433,34 +435,33 @@ def player_match_up(request):
     for player in players:
         if pos in player.position:
             if min_afp <= player.salary_custom <= max_afp:
-                if min_sfp <= player.proj_site <= max_sfp:
-                    vs = game_info[player.team][0]
-                    loc = game_info[player.team][1]
-                    loc_ = game_info[player.team][2]
+                vs = game_info[player.team][0]
+                loc = game_info[player.team][1]
+                loc_ = game_info[player.team][2]
 
-                    opr_info_ = json.loads(TMSCache.objects.filter(team=vs, type=2).first().body)
-                    players_.append({
-                        'avatar': player.avatar,
-                        'id': player.id,
-                        'uid': player.uid,
-                        'name': '{} {}'.format(player.first_name, player.last_name),
-                        'team': player.team,
-                        'loc': loc,
-                        'vs': vs,
-                        'pos': player.position,
-                        'inj': player.injury,
-                        'salary': player.salary,
-                        'ampg': player.minutes,
-                        'smpg': player.over_under,
-                        'mdiff': formated_diff(player.over_under-player.minutes,),
-                        'afp': player.salary_custom,
-                        'sfp': player.proj_site,
-                        'pdiff': formated_diff(player.proj_site-player.salary_custom),
-                        'val': player.salary / 250 + 10,    # exception
-                        'opp': opr_info_[player.position],
-                        'opr': opr_info_[player.position+'_rank'],
-                        'color': colors[opr_info_[player.position+'_rank']-1]
-                    })
+                opr_info_ = json.loads(TMSCache.objects.filter(team=vs, type=2).first().body)
+                players_.append({
+                    'avatar': player.avatar,
+                    'id': player.id,
+                    'uid': player.uid,
+                    'name': '{} {}'.format(player.first_name, player.last_name),
+                    'team': player.team,
+                    'loc': loc,
+                    'vs': vs,
+                    'pos': player.position,
+                    'inj': player.injury,
+                    'salary': player.salary,
+                    'ampg': player.minutes,
+                    'smpg': player.over_under,
+                    'mdiff': formated_diff(player.over_under-player.minutes,),
+                    'afp': player.salary_custom,
+                    'sfp': player.proj_site,
+                    'pdiff': formated_diff(player.proj_site-player.salary_custom),
+                    'val': player.salary / 250 + 10,    # exception
+                    'opp': opr_info_[player.position],
+                    'opr': opr_info_[player.position+'_rank'],
+                    'color': colors[opr_info_[player.position+'_rank']-1]
+                })
 
     groups = { ii: [] for ii in POSITION }
     for ii in players_:

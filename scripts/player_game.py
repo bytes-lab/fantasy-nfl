@@ -1,18 +1,15 @@
 """
 Use Pro Football Reference
 """
-import urllib2
-
-from bs4 import BeautifulSoup
-
 import re
 import os
-from os import sys, path
-import django
-from django.db.models import Q
-
-
+import urllib2
 import datetime
+from os import sys, path
+
+import django
+from bs4 import BeautifulSoup
+from django.db.models import Q
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fantasy_nfl.settings")
@@ -110,7 +107,9 @@ def scrape(week):
                                  - _C(defaults, 'pass_int') + 0.1 * _C(defaults, 'rec_yds') \
                                  + 6 * _C(defaults, 'rec_td') + 0.5 * _C(defaults, 'rec')                
 
-                # print(defaults)
+                print(defaults)
+                # import pdb
+                # pdb.set_trace()
                 PlayerGame.objects.update_or_create(uid=uid, date=date, defaults=defaults)
             # except Exception as e:
                 # print(defaults)
@@ -118,5 +117,5 @@ def scrape(week):
                 # print(e)
 
 if __name__ == "__main__":
-    for week in range(15, 18):
+    for week in range(1, 14):
         scrape(week)

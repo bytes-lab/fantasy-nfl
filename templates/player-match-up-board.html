@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
       <h5 class="mb-3">Player Match-Up Board</h5>
@@ -21,19 +21,12 @@
                 <input type="checkbox" class="form-check-input" checked="" value="{{ game.home_team }}-{{ game.visit_team }}">{{ game.visit_team }} @ {{ game.home_team }}
               </label>
             </div>
-            <div class="ml-4 text-secondary">( {{ game.date|date:"H:i" }} )</div>
+            <div class="ml-4 text-secondary">( {{ game.date }} )</div>
           </div>
         {% endfor %}
       </div>
     </div>
     <div class="col-md-12 mt-4 filters">
-<!--       <label class="ml-1">Home / Away: </label>
-      <select class="ml-2 loc" onchange="loadBoard()">
-        <option value="all">All</option>
-        <option value="">Home</option>
-        <option value="@">Away</option>
-      </select>
- -->
       <label class="">Salary: </label>
       <select class="ml-2 ds" onchange="loadBoard()">
         <option>FanDuel</option>
@@ -69,16 +62,9 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-6 d-none">
-      <div class="float-right filters" style="margin-top: -5px;">
-        <label class="mr-2">SFP: </label>
-        <input type="text" class="slider-val" readonly>
-        <div class="fpts-filter slider-range sfp"></div>
-      </div>
+    <div class="col-md-12">
+      <div class="games player-board"></div>
     </div>
-    <div class="col-md-12">     
-    </div>
-    <div class="col-md-12 games player-board"></div>
   </div>
 </div>
 {% endblock %}
