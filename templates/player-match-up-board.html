@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="offset-md-1 col-md-10">
   <div class="row">
     <div class="col-md-12">
       <h5 class="mb-3">Player Match-Up Board</h5>
@@ -26,27 +26,10 @@
         {% endfor %}
       </div>
     </div>
-    <div class="col-md-12 mt-4 filters">
-      <label class="">Salary: </label>
-      <select class="ml-2 ds" onchange="loadBoard()">
-        <option>FanDuel</option>
-        <option>DraftKings</option>
-        <option>Fanball</option>
-      </select>
-
-      <div class="float-right filters" style="margin-top: -25px;">
-        <label class="mr-2">AFP: </label>
-        <input type="text" class="slider-val" readonly>
-        <div class="fpts-filter slider-range afp"></div>
-      </div>
-    </div>
-    <div class="col-md-6 pl-2">
+    <div class="col-md-5 mt-3 pl-2">
       <ul class="nav nav-pills position-filter p-2">
         <li class="nav-item">
-          <a class="nav-link active" href="#">All</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">QB</a>
+          <a class="nav-link active" href="#">QB</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">RB</a>
@@ -61,6 +44,14 @@
           <a class="nav-link" href="#">DEF</a>
         </li>
       </ul>
+    </div>
+    <div class="col-md-2 mt-4 filters">
+      <label class="">Salary: </label>
+      <select class="ml-2 ds" onchange="loadBoard()">
+        <option>FanDuel</option>
+        <option>DraftKings</option>
+        <option>Fanball</option>
+      </select>
     </div>
     <div class="col-md-12">
       <div class="games player-board"></div>

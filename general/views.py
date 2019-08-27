@@ -408,10 +408,7 @@ def build_player_cache():
 def player_match_up(request):
     loc = request.POST.get('loc')
     pos = request.POST.get('pos')
-    pos = '' if pos == 'All' else pos
     ds = request.POST.get('ds')
-    min_afp = float(request.POST.get('min_afp'))
-    max_afp = float(request.POST.get('max_afp'))
     games = request.POST.get('games').strip(';').split(';')
 
     game_info = {}
@@ -431,37 +428,37 @@ def player_match_up(request):
     colors = linear_gradient('#90EE90', '#137B13', len(all_teams))['hex']
     players = Player.objects.filter(data_source=ds, available=True, team__in=teams_) \
                             .order_by('-proj_points')
+    players = []
     players_ = []
     for player in players:
         if pos in player.position:
-            if min_afp <= player.salary_custom <= max_afp:
-                vs = game_info[player.team][0]
-                loc = game_info[player.team][1]
-                loc_ = game_info[player.team][2]
+            vs = game_info[player.team][0]
+            loc = game_info[player.team][1]
+            loc_ = game_info[player.team][2]
 
-                opr_info_ = json.loads(TMSCache.objects.filter(team=vs, type=2).first().body)
-                players_.append({
-                    'avatar': player.avatar,
-                    'id': player.id,
-                    'uid': player.uid,
-                    'name': '{} {}'.format(player.first_name, player.last_name),
-                    'team': player.team,
-                    'loc': loc,
-                    'vs': vs,
-                    'pos': player.position,
-                    'inj': player.injury,
-                    'salary': player.salary,
-                    'ampg': player.minutes,
-                    'smpg': player.over_under,
-                    'mdiff': formated_diff(player.over_under-player.minutes,),
-                    'afp': player.salary_custom,
-                    'sfp': player.proj_site,
-                    'pdiff': formated_diff(player.proj_site-player.salary_custom),
-                    'val': player.salary / 250 + 10,    # exception
-                    'opp': opr_info_[player.position],
-                    'opr': opr_info_[player.position+'_rank'],
-                    'color': colors[opr_info_[player.position+'_rank']-1]
-                })
+            opr_info_ = json.loads(TMSCache.objects.filter(team=vs, type=2).first().body)
+            players_.append({
+                'avatar': player.avatar,
+                'id': player.id,
+                'uid': player.uid,
+                'name': '{} {}'.format(player.first_name, player.last_name),
+                'team': player.team,
+                'loc': loc,
+                'vs': vs,
+                'pos': player.position,
+                'inj': player.injury,
+                'salary': player.salary,
+                'ampg': player.minutes,
+                'smpg': player.over_under,
+                'mdiff': formated_diff(player.over_under-player.minutes,),
+                'afp': player.salary_custom,
+                'sfp': player.proj_site,
+                'pdiff': formated_diff(player.proj_site-player.salary_custom),
+                'val': player.salary / 250 + 10,    # exception
+                'opp': opr_info_[player.position],
+                'opr': opr_info_[player.position+'_rank'],
+                'color': colors[opr_info_[player.position+'_rank']-1]
+            })
 
     groups = { ii: [] for ii in POSITION }
     for ii in players_:
@@ -479,7 +476,8 @@ def player_match_up(request):
         if groups[ii]:
             players += groups[ii] + [{}]
 
-    return HttpResponse(render_to_string('player-board_.html', locals()))
+    template = 'player-board-{}.html'.format(pos.lower())
+    return HttpResponse(render_to_string(template, locals()))
 
 
 def mean(numbers):

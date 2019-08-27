@@ -22,7 +22,7 @@
         <td>
           <a href="/players/{{ ii.id }}">
             <div>{{ ii.first_name }} {{ ii.last_name }}</div>
-            <div class="sub">{{ ii.team }} {{ ii.opponent1 }}</div>            
+            <div class="sub">{{ ii.team }} {{ ii.opponent1 }}</div>
           </a>
         </td>
         <td class="text-right pr-3">{% if ds != 'Yahoo' %}${% endif %} {{ ii.salary|floatformat:0 }}</td>
