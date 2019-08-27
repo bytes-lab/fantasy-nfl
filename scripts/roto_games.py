@@ -10,10 +10,13 @@ django.setup()
 
 from general.models import *
 from general.views import *
+from scripts.get_slate import get_slate
 
 def get_games():
     # try:
-        url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=NFL&site=Yahoo&type=main&slate=all'
+        site = 'FanDuel'
+        slate, type = get_slate(site)
+        url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=NFL&site={}&type={}&slate={}'.format(site, type, slate)
 
         games = requests.get(url).json()
         if games:

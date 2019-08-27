@@ -59,14 +59,28 @@ def scrape(week):
         home_score = int(game_results[0].text.strip())
         away_score = int(game_results[1].text.strip())
 
+        pos_dict = {}
+
+        for table_id in ["home_snap_counts", "vis_snap_counts"]:
+            tbl_text = body.split('<div class="overthrow table_container" id="div_{}">'.format(table_id))[1].split('</div>')[0]
+            soup = BeautifulSoup(tbl_text, "html.parser")
+            table = soup.find("table", {"id": table_id})
+    
+            for player in table.find("tbody").find_all("tr"):
+                uid = player.find("th", {"data-stat": "player"}).get('data-append-csv')
+                pos = player.find("td", {"data-stat": "pos"}).text.strip()
+                pos_dict[uid] = pos
+
+                if player.get('class'): # ignore header
+                    break
+
         tbl_text = body.split('<div class="overthrow table_container" id="div_player_offense">')[1].split('</div>')[0]
         soup = BeautifulSoup(tbl_text, "html.parser")
-        table = soup.find("table", {"id":"player_offense"})
-        player_rows = table.find("tbody")
-        players = player_rows.find_all("tr")
+        table = soup.find("table", {"id": "player_offense"})
+        players = table.find("tbody").find_all("tr")
 
-        home_team = sync('team', players[-1].find("td", {"data-stat":"team"}).text.strip())
-        away_team = sync('team', players[0].find("td", {"data-stat":"team"}).text.strip())
+        home_team = sync('team', players[-1].find("td", {"data-stat": "team"}).text.strip())
+        away_team = sync('team', players[0].find("td", {"data-stat": "team"}).text.strip())
 
         game_info = {
             home_team: [away_team, '', 'W' if home_score > away_score else 'T' if home_score == away_score else 'L'],
@@ -78,11 +92,11 @@ def scrape(week):
                 if player.get('class'): # ignore header
                     continue
 
-                name = player.find("th", {"data-stat":"player"}).text.strip()
+                name = player.find("th", {"data-stat": "player"}).text.strip()
                 name = sync('name', name)
                 game_date = game_link[11:19]
                 date = datetime.datetime.strptime(game_date, '%Y%m%d')
-                uid = player.find("th", {"data-stat":"player"}).get('data-append-csv')
+                uid = player.find("th", {"data-stat": "player"}).get('data-append-csv')
 
                 defaults = {
                     'name': name,
@@ -98,6 +112,7 @@ def scrape(week):
                     if field:
                         defaults[ii] = field
 
+                defaults['pos'] = pos_dict.get(uid, '')
                 defaults['team'] = sync('team', defaults['team'])
                 defaults['opp'] = game_info[defaults['team']][0]
                 defaults['game_location'] = game_info[defaults['team']][1]
@@ -107,9 +122,6 @@ def scrape(week):
                                  - _C(defaults, 'pass_int') + 0.1 * _C(defaults, 'rec_yds') \
                                  + 6 * _C(defaults, 'rec_td') + 0.5 * _C(defaults, 'rec')                
 
-                print(defaults)
-                # import pdb
-                # pdb.set_trace()
                 PlayerGame.objects.update_or_create(uid=uid, date=date, defaults=defaults)
             # except Exception as e:
                 # print(defaults)
@@ -117,5 +129,5 @@ def scrape(week):
                 # print(e)
 
 if __name__ == "__main__":
-    for week in range(1, 14):
+    for week in range(1, 22):
         scrape(week)
