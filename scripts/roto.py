@@ -1,6 +1,8 @@
-import requests
 import os
+import requests
+
 from os import sys, path
+
 import django
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -12,10 +14,10 @@ from general import html2text
 from scripts.get_slate import get_slate
 
 def get_players(data_source, teams):
-    fields = ['point_spread', 'position', 'proj_ceiling', 'opponent', 'money_line',
+    fields = ['point_spread', 'team_points', 'proj_ceiling', 'opponent', 'money_line',
               'proj_custom', 'proj_floor', 'proj_original', 'proj_points', 'proj_rotowire', 
               'proj_third_party_one', 'proj_third_party_two', 'actual_position', 
-              'salary', 'team', 'team_points']
+              'salary', 'team']
 
     try:
         slate, type = get_slate(data_source)
@@ -26,6 +28,7 @@ def get_players(data_source, teams):
             print data_source, len(players)
             for ii in players:
                 defaults = { key: str(ii[key]).replace(',', '') for key in fields }
+                defaults['position'] = ii['position'] if ii['position'] != 'D' else 'DEF'
                 defaults['available'] = ii['team'] in teams
                 defaults['injury'] = html2text.html2text(ii['injury']).strip().upper()
                 defaults['first_name'] = ii['first_name'].replace('.', '')

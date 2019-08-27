@@ -2,10 +2,10 @@
 <table class="table table-hover table-responsive-md">
 <thead>
   <tr>
-    <th>Player</th><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th><th>&nbsp;</th>
-    <th title="Player’s Team">TM</th>
+    <th colspan="3">Player</th>
+    <th title="Player’s Team">&nbsp;TM</th>
     <th title="Player is Home or Away">H/A</th>
-    <th title="Team that the player is competing against">VS</th>
+    <th title="Team that the player is competing against">&nbsp;&nbsp;VS</th>
     <th title="Fantasy Salary selected from Salary Drop down menu">Salary</th><th>&nbsp;</th>
     <th title="Overall Average Fantasy Points">AFP</th>
     <th title="Player’s value determined from Salary Drop down menu (Salary / 1,000 X 4 + 10 = VAL)">VAL</th>
@@ -25,32 +25,28 @@
   <tbody>
     {% for ii in players %}
       <tr>
-        {% if ii %}
-          <td colspan="5"><a href="/players/{{ ii.id }}" style="font-size: 14px;"><img src="{{ ii.avatar }}" height="24" class="mr-2">{{ ii.name }}</a></td>
-          <td>{{ ii.pos }}</td>
-          <td>{{ ii.team }}</td>
-          <td>{{ ii.loc }}</td>
-          <td>{{ ii.vs }}</td>
-          <td colspan="2">$ {{ ii.salary|floatformat:0 }}</td>
-          <td>{{ ii.ampg|floatformat:1 }}</td>
-          <td>{{ ii.smpg|floatformat:1 }}</td>
-          <td class="{% if '(' in ii.mdiff %}text-danger{% else %}text-success{% endif %}">
-            {{ ii.mdiff }}
-          </td>
-          <td>{{ ii.opp|floatformat:1 }}</td>
-          <td class="text-center" style="color: #ffff00; font-weight: 700; background: {{ ii.color }};">{{ ii.opr }}</td>
-          <td>{{ ii.afp|floatformat:1 }}</td>
-          <td>{{ ii.sfp|floatformat:1 }}</td>
-          <td class="{% if '(' in ii.pdiff %}text-danger{% else %}text-success{% endif %}">
-            {{ ii.pdiff }}
-          </td>
-          <td>{{ ii.val|floatformat:1 }}</td>
-          <td>{{ ii.ppr }}</td>
-          <td class="{% if ii.inj != '-' %}text-danger{% endif %}">{{ ii.inj }}</td>
-          <td><i class="far fa-thumbs-up fav {{ ii.uid|liked:request.session }}" data-uid="{{ ii.uid }}"></i></td>
-        {% else %}
-          <td colspan="17" class="break">&nbsp;</td>
-        {% endif %}
+        <td colspan="3"><a href="/players/{{ ii.id }}" style="font-size: 14px;"><img src="{{ ii.avatar }}" height="24" class="mr-2">{{ ii.name }}</a></td>
+        <td>{{ ii.team }}</td>
+        <td>{{ ii.loc }}</td>
+        <td>{{ ii.vs }}</td>
+        <td colspan="2">$ {{ ii.salary|floatformat:0 }}</td>
+        <td>{{ ii.ampg|floatformat:1 }}</td>
+        <td>{{ ii.smpg|floatformat:1 }}</td>
+        <td class="{% if '(' in ii.mdiff %}text-danger{% else %}text-success{% endif %}">
+          {{ ii.mdiff }}
+        </td>
+        <td>{{ ii.opp|floatformat:1 }}</td>
+        <td class="text-center" style="color: #ffff00; font-weight: 700; background: {{ ii.color }};">{{ ii.opr }}</td>
+        <td>{{ ii.afp|floatformat:1 }}</td>
+        <td>{{ ii.sfp|floatformat:1 }}</td>
+        <td class="{% if '(' in ii.pdiff %}text-danger{% else %}text-success{% endif %}">
+          {{ ii.pdiff }}
+        </td>
+        <td>{{ ii.val|floatformat:1 }}</td>
+        <td>{{ ii.ppr }}</td>
+        <td>{{ ii.ppr1 }}</td>
+        <td class="{% if ii.inj != '-' %}text-danger{% endif %}">{{ ii.inj }}</td>
+        <td><i class="far fa-thumbs-up fav {{ ii.uid|liked:request.session }}" data-uid="{{ ii.uid }}"></i></td>
       </tr>
     {% endfor %}
   </tbody>

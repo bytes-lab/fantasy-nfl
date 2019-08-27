@@ -9,13 +9,13 @@ class PlayerAdmin(admin.ModelAdmin):
     list_display = ['uid', 'eid', 'first_name', 'last_name', 'position', 'team', 'opponent', 'salary', 
                     'proj_points', 'available', 'data_source', 'updated_at', 'created_at']
     search_fields = ['first_name', 'last_name', 'team', 'uid']
-    list_filter = ['team', 'data_source', 'position', 'available']
+    list_filter = ['data_source', 'position', 'available', 'team']
 
 
 class PlayerGameAdmin(admin.ModelAdmin):
     list_display = ['name', 'uid', 'pos', 'team', 'game_location', 'opp', 'game_result', 'fpts', 'date']
-    search_fields = ['name', 'team']
-    list_filter = ['team', 'opp', 'game_location']
+    search_fields = ['name']
+    list_filter = ['game_location', 'pos', 'team', 'opp']
 
 
 class GameAdmin(admin.ModelAdmin):

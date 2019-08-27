@@ -17,7 +17,7 @@ from general.models import *
 from general.lineup import *
 from general.color import *
 
-POSITION = ['QB', 'RB', 'WR', 'TE', 'D']
+POSITION = ['QB', 'RB', 'WR', 'TE', 'DEF']
 
 
 def _get_game_today():
@@ -406,7 +406,6 @@ def build_player_cache():
 
 @csrf_exempt
 def player_match_up(request):
-    loc = request.POST.get('loc')
     pos = request.POST.get('pos')
     ds = request.POST.get('ds')
     games = request.POST.get('games').strip(';').split(';')
@@ -418,25 +417,25 @@ def player_match_up(request):
         game_info[teams[0]] = [teams[1], '', '@']   # vs, loc, loc_
         game_info[teams[1]] = [teams[0], '@', '']
 
-        if loc == '' or loc == 'all':
-            teams_.append(teams[0])
-
-        if loc == '@' or loc == 'all':
-            teams_.append(teams[1])
+        teams_.append(teams[0])
+        teams_.append(teams[1])
 
     all_teams = _all_teams()
     colors = linear_gradient('#90EE90', '#137B13', len(all_teams))['hex']
     players = Player.objects.filter(data_source=ds, available=True, team__in=teams_) \
                             .order_by('-proj_points')
-    players = []
     players_ = []
+
+    # import pdb
+    # pdb.set_trace()
+
     for player in players:
         if pos in player.position:
             vs = game_info[player.team][0]
             loc = game_info[player.team][1]
             loc_ = game_info[player.team][2]
 
-            opr_info_ = json.loads(TMSCache.objects.filter(team=vs, type=2).first().body)
+            # opr_info_ = json.loads(TMSCache.objects.filter(team=vs, type=2).first().body)
             players_.append({
                 'avatar': player.avatar,
                 'id': player.id,
@@ -445,7 +444,6 @@ def player_match_up(request):
                 'team': player.team,
                 'loc': loc,
                 'vs': vs,
-                'pos': player.position,
                 'inj': player.injury,
                 'salary': player.salary,
                 'ampg': player.minutes,
@@ -455,26 +453,14 @@ def player_match_up(request):
                 'sfp': player.proj_site,
                 'pdiff': formated_diff(player.proj_site-player.salary_custom),
                 'val': player.salary / 250 + 10,    # exception
-                'opp': opr_info_[player.position],
-                'opr': opr_info_[player.position+'_rank'],
-                'color': colors[opr_info_[player.position+'_rank']-1]
+                'opp': 0, #opr_info_[player.position],
+                'opr': 0, #opr_info_[player.position+'_rank'],
+                'color': '#eee', #colors[opr_info_[player.position+'_rank']-1]
             })
 
-    groups = { ii: [] for ii in POSITION }
-    for ii in players_:
-        groups[ii['pos']].append(ii)
-
-    num_oprs = []
-    for ii in POSITION:
-        if groups[ii]:
-            groups[ii], _ = get_ranking(groups[ii], 'sfp', 'ppr', -1)
-            groups[ii] = sorted(groups[ii], key=lambda k: k['team'])
-            groups[ii] = sorted(groups[ii], key=lambda k: -k['opr'])
-
-    players = []
-    for ii in POSITION:
-        if groups[ii]:
-            players += groups[ii] + [{}]
+    players, _ = get_ranking(players_, 'sfp', 'ppr', -1)
+    players = sorted(players, key=lambda k: k['team'])
+    players = sorted(players, key=lambda k: -k['opr'])
 
     template = 'player-board-{}.html'.format(pos.lower())
     return HttpResponse(render_to_string(template, locals()))
