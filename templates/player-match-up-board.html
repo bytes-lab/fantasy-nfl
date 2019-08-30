@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="offset-md-1 col-md-10">
+<div class="container">
   <div class="row">
     <div class="col-md-12">
       <h5 class="mb-3">Player Match-Up Board</h5>
@@ -45,12 +45,18 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-2 mt-4 filters">
+    <div class="col-md-6 mt-4 filters">
       <label class="">Salary: </label>
       <select class="ml-2 ds" onchange="loadBoard()">
         <option>FanDuel</option>
         <option>DraftKings</option>
         <option>Fanball</option>
+      </select>
+      <label class="ml-5">Home / Away: </label>
+      <select class="ml-2 loc" onchange="loadBoard()">
+        <option value="all">All</option>
+        <option value="">Home</option>
+        <option value="@">Away</option>
       </select>
     </div>
     <div class="col-md-12">

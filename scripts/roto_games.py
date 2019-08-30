@@ -27,8 +27,8 @@ def get_games():
                     defaults = { key: ii[key] for key in fields }
                     defaults['ou'] = float(ii.get('ou', 0))
                     Game.objects.create(**defaults)
-            # build_TMS_cache()
-            # build_player_cache()
+            build_TMS_cache()
+            build_player_cache()
     # except:
     #     pass
 

@@ -35,7 +35,7 @@ function loadBoard() {
   })
 
   var data = { 
-        loc: 'all', // $('.filters select.loc').val(), 
+        loc: $('.filters select.loc').val(), 
         ds: $('.filters select.ds').val(),
         pos: $('.position-filter .nav-item a.active').html(),
         min_afp: $('.afp').slider("values")[0],

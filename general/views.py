@@ -123,11 +123,6 @@ def player_match_up_board(request):
     return render(request, 'player-match-up-board.html', locals())
 
 
-def team_match_up_board(request):
-    games = _get_game_today()
-    return render(request, 'team-match-up-board.html', locals())
-
-
 def formated_diff(val):
     fm = '{:.1f}' if val > 0 else '({:.1f})'
     return fm.format(abs(val))
@@ -359,26 +354,6 @@ def filter_players_fpa(team, min_afp, max_afp):
     except Exception as e:
         return {}
 
-@csrf_exempt
-def team_match_up(request):
-    min_afp = float(request.POST.get('min_afp'))
-    max_afp = float(request.POST.get('max_afp'))
-
-    game = request.POST.get('game')
-    game = Game.objects.get(id=game)
-
-    home_stat = TMSCache.objects.filter(team=game.home_team, type=2).first()
-    away_stat = TMSCache.objects.filter(team=game.visit_team, type=2).first()
-
-    teams = {
-        'home': filter_players_fpa(game.home_team, min_afp, max_afp),
-        'home_stat': json.loads(home_stat.body) if home_stat else {},
-        'away': filter_players_fpa(game.visit_team, min_afp, max_afp),
-        'away_stat': json.loads(away_stat.body) if away_stat else {}
-    }
-
-    return HttpResponse(render_to_string('team-board_.html', locals()))
-
 
 def build_player_cache():
     # player info -> build cache
@@ -408,6 +383,7 @@ def build_player_cache():
 def player_match_up(request):
     pos = request.POST.get('pos')
     ds = request.POST.get('ds')
+    f_loc = request.POST.get('loc')
     games = request.POST.get('games').strip(';').split(';')
 
     game_info = {}
@@ -426,37 +402,35 @@ def player_match_up(request):
                             .order_by('-proj_points')
     players_ = []
 
-    # import pdb
-    # pdb.set_trace()
-
     for player in players:
         if pos in player.position:
             vs = game_info[player.team][0]
             loc = game_info[player.team][1]
             loc_ = game_info[player.team][2]
 
-            # opr_info_ = json.loads(TMSCache.objects.filter(team=vs, type=2).first().body)
-            players_.append({
-                'avatar': player.avatar,
-                'id': player.id,
-                'uid': player.uid,
-                'name': '{} {}'.format(player.first_name, player.last_name),
-                'team': player.team,
-                'loc': loc,
-                'vs': vs,
-                'inj': player.injury,
-                'salary': player.salary,
-                'ampg': player.minutes,
-                'smpg': player.over_under,
-                'mdiff': formated_diff(player.over_under-player.minutes,),
-                'afp': player.salary_custom,
-                'sfp': player.proj_site,
-                'pdiff': formated_diff(player.proj_site-player.salary_custom),
-                'val': player.salary / 250 + 10,    # exception
-                'opp': 0, #opr_info_[player.position],
-                'opr': 0, #opr_info_[player.position+'_rank'],
-                'color': '#eee', #colors[opr_info_[player.position+'_rank']-1]
-            })
+            if loc == f_loc or f_loc == 'all':
+                # opr_info_ = json.loads(TMSCache.objects.filter(team=vs, type=2).first().body)
+                players_.append({
+                    'avatar': player.avatar,
+                    'id': player.id,
+                    'uid': player.uid,
+                    'name': '{} {}'.format(player.first_name, player.last_name),
+                    'team': player.team,
+                    'loc': loc,
+                    'vs': vs,
+                    'inj': player.injury,
+                    'salary': player.salary,
+                    'ampg': player.minutes,
+                    'smpg': player.over_under,
+                    'mdiff': formated_diff(player.over_under-player.minutes,),
+                    'afp': player.salary_custom,
+                    'sfp': player.proj_site,
+                    'pdiff': formated_diff(player.proj_site-player.salary_custom),
+                    'val': player.salary / 250 + 10,    # exception
+                    'opp': 0, #opr_info_[player.position],
+                    'opr': 0, #opr_info_[player.position+'_rank'],
+                    'color': '#eee', #colors[opr_info_[player.position+'_rank']-1]
+                })
 
     players, _ = get_ranking(players_, 'sfp', 'ppr', -1)
     players = sorted(players, key=lambda k: k['team'])
