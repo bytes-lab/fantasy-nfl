@@ -14,7 +14,7 @@ from general import html2text
 from scripts.get_slate import get_slate
 
 def get_players(data_source, teams):
-    fields = ['point_spread', 'team_points', 'proj_ceiling', 'opponent', 'money_line',
+    fields = ['point_spread', 'team_points', 'opponent', 'money_line',
               'proj_custom', 'proj_floor', 'proj_original', 'proj_points', 'proj_rotowire', 
               'proj_third_party_one', 'proj_third_party_two', 'actual_position', 
               'salary', 'team']

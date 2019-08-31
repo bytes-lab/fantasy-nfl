@@ -28,27 +28,28 @@ class Player(models.Model):
     avatar = models.CharField(max_length=250, default="/static/img/default.ico")
     injury = models.CharField(max_length=250, blank=True, null=True)
     opponent = models.CharField(max_length=50)
-    gid = models.CharField(max_length=50, blank=True, null=True)
     exp = models.IntegerField(default=0)                # for exceptional avatar
     
-    minutes = models.FloatField(default=0)              # ampg
+    minutes = models.FloatField(default=0)
     money_line = models.IntegerField(default=0)
-    over_under = models.FloatField(default=0)           # smpg
+    over_under = models.FloatField(default=0)
     point_spread = models.FloatField(default=0)
     position = models.CharField(max_length=50)
     actual_position = models.CharField(max_length=50)
-    proj_ceiling = models.FloatField(default=0)
     proj_custom = models.FloatField(default=0)
     proj_floor = models.FloatField(default=0)
     proj_original = models.FloatField(default=0)
     proj_points = models.FloatField(default=0)
     proj_rotowire = models.FloatField(default=0)
-    proj_site = models.FloatField(default=0)            # sfp
+    proj_site = models.FloatField(default=0)
     proj_third_party_one = models.FloatField(default=0)
     proj_third_party_two = models.FloatField(default=0)  
     salary = models.IntegerField(default=0)
-    salary_custom = models.FloatField(default=0)        # afp
-    salary_original = models.FloatField(default=0)      # l3a
+
+    yoa = models.FloatField(default=0)
+    afp = models.FloatField(default=0)
+
+    salary_original = models.FloatField(default=0)
     team = models.CharField(max_length=50)
     team_points = models.FloatField(default=0)
     value = models.FloatField(default=0)

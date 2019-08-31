@@ -25,7 +25,7 @@ def get_games():
             for ii in games:
                 if ii['game_status'] == 'upcoming':
                     defaults = { key: ii[key] for key in fields }
-                    defaults['ou'] = float(ii.get('ou', 0))
+                    defaults['ou'] = float(ii['ou'] or 0)
                     Game.objects.create(**defaults)
             build_TMS_cache()
             build_player_cache()
