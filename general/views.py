@@ -18,7 +18,7 @@ from general.lineup import *
 from general.color import *
 
 POSITION = ['QB', 'RB', 'WR', 'TE', 'DEF']
-
+POSITION_GAME_MAP = {'QB': ['QB'], 'RB': ['RB', 'FB'], 'WR': ['WR'], 'TE': ['TE']}
 
 def _get_game_today():
     return Game.objects.all()
@@ -195,6 +195,7 @@ def get_team_stat(team):
     l_rcy = s_teams_.get('rec_yds') or 0
 
     res = {
+        'team': team,
         'pyda': pyda,
         'ruyda': ruyda,
         'rcyda': rcyda,
@@ -206,11 +207,26 @@ def get_team_stat(team):
         'a_py': a_py,
         'a_ruy': a_ruy,
         'a_rcy': a_rcy,
-        
+
         'l_py': l_py,
         'l_ruy': l_ruy,
         'l_rcy': l_rcy
     }
+
+    # FPA TM POS
+    tm_pos = []
+    # for each distinct match
+    for ii in a_teams_:
+        # players (games) in a match
+        players = a_teams.filter(date=ii['date'])
+
+        tm_pos_ = {}
+        # for each position
+        for pos in POSITION_GAME_MAP:
+            tm_pos_[pos] = players.filter(pos__in=POSITION_GAME_MAP[pos]).aggregate(Sum('fpts'))['fpts__sum'] or 0
+
+    for pos in POSITION_GAME_MAP:
+        res[pos] = sum(ii[pos] for ii in tm_pos) / len(tm_pos) if len(tm_pos) else -1
 
     return res
 
@@ -293,8 +309,6 @@ def player_match_up(request):
         teams_.append(teams[0])
         teams_.append(teams[1])
 
-    all_teams = _all_teams()
-    colors = linear_gradient('#90EE90', '#137B13', len(all_teams))['hex']
     players = Player.objects.filter(data_source=ds, available=True, team__in=teams_) \
                             .order_by('-proj_points')
     players_ = []
@@ -320,14 +334,14 @@ def player_match_up(request):
                     'afp': player.afp,
                     'yoa': player.yoa,
                     'val': player.salary / 250 + 10,
-                    'opr': 0,
                     'team_stat': team_stat[player.team],
-                    'color': '#eee', #colors[opr_info_[player.position+'_rank']-1]
                 })
 
     players, _ = get_ranking(players_, 'afp', 'ppr', -1)
     players = sorted(players, key=lambda k: k['team'])
-    players = sorted(players, key=lambda k: -k['opr'])
+
+    if pos != 'DEF':
+        players = sorted(players, key=lambda k: -k['team_stat'][pos+'_rank'])
 
     template = 'player-board-{}.html'.format(pos.lower())
     return HttpResponse(render_to_string(template, locals()))
@@ -407,8 +421,16 @@ def update_point(request):
 
 
 def build_TMS_cache():
-    team_stat = { ii: get_team_stat(ii) for ii in _all_teams() }
+    all_teams = _all_teams()
+    colors = linear_gradient('#90EE90', '#137B13', len(all_teams))['hex']
+
+    team_stat = [get_team_stat(ii) for ii in all_teams]
+    for attr in POSITION_GAME_MAP:
+        team_stat, _ = get_ranking(team_stat, attr, attr+'_rank')
+        for ii in team_stat:
+            ii[attr+'_color'] = colors[ii[attr+'_rank']-1]
+
+    team_info = { ii['team']: ii for ii in team_stat }
 
     TMSCache.objects.all().delete()
-
-    TMSCache.objects.create(team='TEAM STAT', type=1, body=json.dumps(team_stat))
+    TMSCache.objects.create(team='TEAM STAT', type=1, body=json.dumps(team_info))

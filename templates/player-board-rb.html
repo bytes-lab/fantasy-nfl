@@ -31,7 +31,9 @@
         <td>{{ ii.afp|floatformat:1 }}</td>
         <td>{{ ii.val|floatformat:1 }}</td>
         <td>{{ ii.ppr }}</td>
-        <td>{{ ii.opr }}</td>
+        <td class="text-center" style="color: #ffff00; font-weight: 700; background: {{ ii.team_stat.RB_color }};">
+            {{ ii.team_stat.RB_rank }}
+        </td>
         <td>{{ ii.yoa|floatformat:1 }}</td>
         <td>{{ ii.team_stat.ruyda|floatformat:1 }}</td>
         <td>{{ ii.team_stat.l_ruy|floatformat:1 }}</td>

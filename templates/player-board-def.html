@@ -2,7 +2,7 @@
 <table class="table table-hover table-responsive-md">
 <thead>
   <tr>
-    <th colspan="3">Player</th>
+    <th colspan="4">Player</th>
     <th title="Player’s Team">&nbsp;TM</th>
     <th title="Player is Home or Away">H/A</th>
     <th title="Team that the player is competing against">&nbsp;&nbsp;VS</th>
@@ -25,12 +25,13 @@
   <tbody>
     {% for ii in players %}
       <tr>
-        <td colspan="3"><a href="/players/{{ ii.id }}" style="font-size: 14px;"><img src="{{ ii.avatar }}" height="24" class="mr-2">{{ ii.name }}</a></td>
+        <td colspan="4"><a href="/players/{{ ii.id }}" style="font-size: 14px;"><img src="/static/img/team/{{ ii.name.strip }}.png" height="24" class="mr-2">{{ ii.name }}</a></td>
         <td>{{ ii.team }}</td>
         <td>{{ ii.loc }}</td>
         <td>{{ ii.vs }}</td>
         <td colspan="2">$ {{ ii.salary|floatformat:0 }}</td>
-        <td>{{ ii.ampg|floatformat:1 }}</td>
+        <td>{{ ii.afp|floatformat:1 }}</td>
+        <td>{{ ii.val|floatformat:1 }}</td>
         <td>{{ ii.smpg|floatformat:1 }}</td>
         <td class="{% if '(' in ii.mdiff %}text-danger{% else %}text-success{% endif %}">
           {{ ii.mdiff }}
@@ -42,7 +43,6 @@
         <td class="{% if '(' in ii.pdiff %}text-danger{% else %}text-success{% endif %}">
           {{ ii.pdiff }}
         </td>
-        <td>{{ ii.val|floatformat:1 }}</td>
         <td>{{ ii.ppr }}</td>
         <td>{{ ii.ppr1 }}</td>
         <td class="{% if ii.inj != '-' %}text-danger{% endif %}">{{ ii.inj }}</td>
