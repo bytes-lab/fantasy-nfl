@@ -84,7 +84,7 @@ def get_games_(pid, loc, opp, season):
 
 def current_season():
     today = datetime.date.today()
-    return today.year if today > datetime.date(today.year, 9, 1) else today.year - 1
+    return today.year if today > datetime.date(today.year, 9, 10) else today.year - 1
 
 
 def player_detail(request, pid):
@@ -123,7 +123,7 @@ def player_match_up_board(request):
     return render(request, 'player-match-up-board.html', locals())
 
 
-def formated_diff(val):
+def formatted_diff(val):
     fm = '{:.1f}' if val > 0 else '({:.1f})'
     return fm.format(abs(val))
 
@@ -156,6 +156,41 @@ def get_team_stat(team):
     ruyda = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
     rcyda = a_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
 
+    ## last game
+    a_teams_ = a_teams_.order_by('-date').first()
+
+    l_pya = a_teams_.get('pass_yds') or 0
+    l_ruya = a_teams_.get('rush_yds') or 0
+    l_rcya = a_teams_.get('rec_yds') or 0
+
+    ## points allowed
+    a_teams_ = a_teams.values('date').annotate(fpts=Sum('fpts'))
+    pa = a_teams_.aggregate(Avg('fpts'))['fpts__avg'] or 0
+
+    loc = ''        ## home
+    q = Q(opp=team) & Q(game_location=loc) & \
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
+    a_teams = PlayerGame.objects.filter(q)
+    a_teams_ = a_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
+                                               rush_yds=Sum('rush_yds'),
+                                               rec_yds=Sum('rec_yds'))
+
+    h_pya = a_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
+    h_ruya = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
+    h_rcya = a_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
+
+    loc = '@'        ## home
+    q = Q(opp=team) & Q(game_location=loc) & \
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
+    a_teams = PlayerGame.objects.filter(q)
+    a_teams_ = a_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
+                                               rush_yds=Sum('rush_yds'),
+                                               rec_yds=Sum('rec_yds'))
+
+    a_pya = a_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
+    a_ruya = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
+    a_rcya = a_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
+
     # offense    
     loc = ''        ## home
     q = Q(team=team) & Q(game_location=loc) & \
@@ -181,24 +216,52 @@ def get_team_stat(team):
     a_ruy = s_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
     a_rcy = s_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
 
-    ## last game
+    ## overall
     q = Q(team=team) & \
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     s_teams = PlayerGame.objects.filter(q)
     s_teams_ = s_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
                                                rush_yds=Sum('rush_yds'),
-                                               rec_yds=Sum('rec_yds')) \
-                      .order_by('-date').first()
+                                               rec_yds=Sum('rec_yds'))
+
+    pya = s_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
+    ruya = s_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
+    rcya = s_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
+    
+    ## last game
+    s_teams_ = s_teams_.order_by('-date').first()
 
     l_py = s_teams_.get('pass_yds') or 0
     l_ruy = s_teams_.get('rush_yds') or 0
     l_rcy = s_teams_.get('rec_yds') or 0
+
+    ## points gained
+    s_teams_ = s_teams.values('date').annotate(fpts=Sum('fpts'))
+    ps = a_teams_.aggregate(Avg('fpts'))['fpts__avg'] or 0
 
     res = {
         'team': team,
         'pyda': pyda,
         'ruyda': ruyda,
         'rcyda': rcyda,
+        'pa': pa, 
+
+        'l_pya': l_pya,
+        'l_ruya': l_ruya,
+        'l_rcya': l_rcya,
+
+        'h_pya': h_pya,
+        'h_ruya': h_ruya,
+        'h_rcya': h_rcya,
+
+        'a_pya': a_pya,
+        'a_ruya': a_ruya,
+        'a_rcya': a_rcya,
+
+        'pya': pya,
+        'ruya': ruya,
+        'rcya': rcya,
+        'ps': ps,
 
         'h_py': h_py,
         'h_ruy': h_ruy,
@@ -318,7 +381,6 @@ def player_match_up(request):
         if pos in player.position:
             vs = game_info[player.team][0]
             loc = game_info[player.team][1]
-            loc_ = game_info[player.team][2]
 
             if loc == f_loc or f_loc == 'all':
                 players_.append({

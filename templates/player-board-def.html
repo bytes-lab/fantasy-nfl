@@ -32,19 +32,19 @@
         <td colspan="2">$ {{ ii.salary|floatformat:0 }}</td>
         <td>{{ ii.afp|floatformat:1 }}</td>
         <td>{{ ii.val|floatformat:1 }}</td>
-        <td>{{ ii.smpg|floatformat:1 }}</td>
-        <td class="{% if '(' in ii.mdiff %}text-danger{% else %}text-success{% endif %}">
-          {{ ii.mdiff }}
+        <td>{{ ii.team_stat.ps|floatformat:1 }}</td>
+        <td>{{ ii.team_stat.pa|floatformat:1 }}</td>
+        <td class="{{ ii.team_stat|pdiff_pt_color }}">
+          {{ ii.team_stat|pdiff_pt }}
         </td>
-        <td>{{ ii.opp|floatformat:1 }}</td>
-        <td class="text-center" style="color: #ffff00; font-weight: 700; background: {{ ii.color }};">{{ ii.opr }}</td>
-        <td>{{ ii.afp|floatformat:1 }}</td>
-        <td>{{ ii.sfp|floatformat:1 }}</td>
-        <td class="{% if '(' in ii.pdiff %}text-danger{% else %}text-success{% endif %}">
-          {{ ii.pdiff }}
+        <td>{{ ii.team_stat|tya }}</td>
+        <td>{{ ii.team_stat|tyda }}</td>
+        <td class="{{ ii.team_stat|pdiff_color }}">
+          {{ ii.team_stat|pdiff }}
         </td>
-        <td>{{ ii.ppr }}</td>
-        <td>{{ ii.ppr1 }}</td>
+        <td>{{ ii.team_stat|lstgm }}</td>
+        <td>{{ ii.team_stat|hgms }}</td>
+        <td>{{ ii.team_stat|agms }}</td>
         <td class="{% if ii.inj != '-' %}text-danger{% endif %}">{{ ii.inj }}</td>
         <td><i class="far fa-thumbs-up fav {{ ii.uid|liked:request.session }}" data-uid="{{ ii.uid }}"></i></td>
       </tr>
