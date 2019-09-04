@@ -27,7 +27,7 @@ def _all_teams():
     return [ii['team'] for ii in Player.objects.values('team').distinct()]
 
 def players(request):
-    players = Player.objects.filter(data_source='FanDuel').order_by('first_name')
+    players = Player.objects.filter(data_source='FanDuel', available=True).order_by('first_name')
     return render(request, 'players.html', locals())
 
 
@@ -401,9 +401,9 @@ def player_match_up(request):
 
             if loc == f_loc or f_loc == 'all':
                 players_.append({
-                    'avatar': player.avatar,
                     'id': player.id,
                     'uid': player.uid,
+                    'eid': player.eid,
                     'name': '{} {}'.format(player.first_name, player.last_name),
                     'team': player.team,
                     'loc': loc,
@@ -459,7 +459,6 @@ def gen_lineups(request):
                   'team': ii.team, 
                   'id': ii.id, 
                   'eid': ii.eid, 
-                  'avatar': ii.avatar, 
                   'lineups': get_num_lineups(ii, lineups)} 
                 for ii in players if get_num_lineups(ii, lineups)]
     players_ = sorted(players_, key=lambda k: k['lineups'], reverse=True)

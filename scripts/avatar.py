@@ -25,7 +25,10 @@ def sync(type_, val):
     }
     return conv[type_][val] if val in conv[type_] else val
 
+
 def get_avatars(teams):
+    Player.objects.all().update(eid=-1)
+
     for team in teams:
         # try:
             url = 'http://site.web.api.espn.com/apis/site/v2/sports/football/nfl/teams/{}/roster'.format(sync("team", team).lower())

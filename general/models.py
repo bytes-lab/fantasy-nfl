@@ -22,10 +22,9 @@ def parse_name(name):
 
 class Player(models.Model):
     uid = models.IntegerField()
-    eid = models.IntegerField(default=-1)               # espn id
+    eid = models.IntegerField(default=-1)               # espn id for avatar
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    avatar = models.CharField(max_length=250, default="/static/img/default.ico")
     injury = models.CharField(max_length=250, blank=True, null=True)
     opponent = models.CharField(max_length=50)
     exp = models.IntegerField(default=0)                # for exceptional avatar
