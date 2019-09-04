@@ -59,8 +59,8 @@ def scrape(week):
         home_score = int(game_results[0].text.strip())
         away_score = int(game_results[1].text.strip())
 
+        # build the pos dict
         pos_dict = {}
-
         for table_id in ["home_snap_counts", "vis_snap_counts"]:
             tbl_text = body.split('<div class="overthrow table_container" id="div_{}">'.format(table_id))[1].split('</div>')[0]
             soup = BeautifulSoup(tbl_text, "html.parser")
@@ -87,6 +87,37 @@ def scrape(week):
             away_team: [home_team, '@', 'L' if home_score > away_score else 'T' if home_score == away_score else 'W']
         }
 
+        game_date = game_link[11:19]
+        date = datetime.datetime.strptime(game_date, '%Y%m%d')
+
+        # store team score
+        defaults = {
+            'name': home_team,
+            'team': home_team,
+            'opp': away_team,
+            'pos': 'DEF',
+            'game_location': '', 
+            'fpts': home_score,
+            'week_num': week,
+            'date': date
+        }
+
+        PlayerGame.objects.update_or_create(name=home_team, date=date, defaults=defaults)
+
+        defaults = {
+            'name': away_team,
+            'team': away_team,
+            'opp': home_team,
+            'pos': 'DEF',
+            'game_location': '@', 
+            'fpts': away_score,
+            'week_num': week,
+            'date': date
+        }
+
+        PlayerGame.objects.update_or_create(name=away_team, date=date, defaults=defaults)
+
+        # build data for players
         for player in players:
             # try:
                 if player.get('class'): # ignore header
@@ -94,8 +125,6 @@ def scrape(week):
 
                 name = player.find("th", {"data-stat": "player"}).text.strip()
                 name = sync('name', name)
-                game_date = game_link[11:19]
-                date = datetime.datetime.strptime(game_date, '%Y%m%d')
                 uid = player.find("th", {"data-stat": "player"}).get('data-append-csv')
 
                 defaults = {

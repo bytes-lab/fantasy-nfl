@@ -102,7 +102,7 @@ class PlayerGame(models.Model):
     week_num = models.IntegerField()
 
     date = models.DateField()
-    fpts = models.FloatField("FPTS", default=-1)
+    fpts = models.FloatField("FPTS", default=-1)    # score for DEF
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -163,9 +163,11 @@ def get_team_stat(team):
     l_ruya = a_teams_.get('rush_yds') or 0
     l_rcya = a_teams_.get('rec_yds') or 0
 
-    ## points allowed
-    a_teams_ = a_teams.values('date').annotate(fpts=Sum('fpts'))
-    pa = a_teams_.aggregate(Avg('fpts'))['fpts__avg'] or 0
+    ## allowed points
+    q = Q(opp=team) & Q(pos='DEF') & \
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
+    a_teams = PlayerGame.objects.filter(q)
+    pa = a_teams.aggregate(Avg('fpts'))['fpts__avg'] or 0
 
     loc = ''        ## home
     q = Q(opp=team) & Q(game_location=loc) & \
@@ -235,9 +237,11 @@ def get_team_stat(team):
     l_ruy = s_teams_.get('rush_yds') or 0
     l_rcy = s_teams_.get('rec_yds') or 0
 
-    ## points gained
-    s_teams_ = s_teams.values('date').annotate(fpts=Sum('fpts'))
-    ps = a_teams_.aggregate(Avg('fpts'))['fpts__avg'] or 0
+    ## scored points
+    q = Q(team=team) & Q(pos='DEF') & \
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
+    s_teams = PlayerGame.objects.filter(q)
+    ps = s_teams.aggregate(Avg('fpts'))['fpts__avg'] or 0
 
     res = {
         'team': team,
@@ -336,12 +340,14 @@ def filter_players_fpa(team, min_afp, max_afp):
 
 def build_player_cache():
     # player info -> build cache
+    season = current_season()
+    ## for players
     players = Player.objects.filter(data_source='FanDuel', available=True) \
-                            .order_by('-proj_points')
+                            .exclude(position='DEF')
 
     yds_field_dict = { 'QB': 'pass_yds', 'RB': 'rush_yds', 'WR': 'rec_yds', 'TE': 'rec_yds' }
     for player in players:
-        games = get_games_(player.id, 'all', '', current_season())
+        games = get_games_(player.id, 'all', '', season)
         afp = games.aggregate(Avg('fpts'))['fpts__avg'] or 0
 
         yoa = 0
@@ -353,6 +359,17 @@ def build_player_cache():
             afp=afp,
             yoa=yoa
         )
+
+    ## for DEF, get afp -> allowance
+    teams = Player.objects.filter(data_source='FanDuel', available=True, position='DEF')
+    for team in teams:
+        q = Q(opp=team.team)& \
+            Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
+        a_teams = PlayerGame.objects.filter(q)
+        a_teams_ = a_teams.values('date').annotate(fpts=Sum('fpts'))
+        fpa = a_teams_.aggregate(Avg('fpts'))['fpts__avg'] or 0
+
+        Player.objects.filter(uid=team.uid).update(afp=fpa)
 
 
 @csrf_exempt
