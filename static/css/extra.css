@@ -196,7 +196,7 @@ table th {
 }
 
 .player-board {
-    max-height: calc(100vh - 330px); 
+    max-height: calc(100vh - 300px); 
     overflow-x: hidden;
 }
 
