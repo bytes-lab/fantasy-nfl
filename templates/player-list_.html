@@ -12,10 +12,14 @@
       <tr>
         <td><input type="checkbox" name="ids" checked="" value="{{ ii.id }}"></td>
         <td style="cursor: pointer;" onclick="pr_click(this)">
-          {% if ii.eid != -1 %}
-            <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ ii.eid }}.png" height="26" class="avatar-sm">
+          {% if ii.position == 'DEF' %}
+            <img src="/static/img/team/{{ ii.first_name.strip }}.png" height="24" class="mr-2">
           {% else %}
-            <img src="/static/img/default.ico" height="26" class="mr-2">
+            {% if ii.eid != -1 %}
+              <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ ii.eid }}.png" height="26" class="avatar-sm">
+            {% else %}
+              <img src="/static/img/default.ico" height="26" class="mr-2">
+            {% endif %}
           {% endif %}
           {{ ii.position }}
         </td>

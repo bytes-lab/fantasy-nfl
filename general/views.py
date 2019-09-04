@@ -292,6 +292,9 @@ def get_team_stat(team):
         for pos in POSITION_GAME_MAP:
             tm_pos_[pos] = players.filter(pos__in=POSITION_GAME_MAP[pos]).aggregate(Sum('fpts'))['fpts__sum'] or 0
 
+        if tm_pos_['QB'] > 0 and tm_pos_['RB'] > 0:
+            tm_pos.append(tm_pos_)
+
     for pos in POSITION_GAME_MAP:
         res[pos] = sum(ii[pos] for ii in tm_pos) / len(tm_pos) if len(tm_pos) else -1
 
