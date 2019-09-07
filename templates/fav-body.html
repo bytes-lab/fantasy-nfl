@@ -17,10 +17,14 @@
           <td colspan="3" style="padding-left: .5rem !important;">
             <a href="/players/{{ ii.id }}">
               <div class="float-left">
-                {% if ii.eid != -1 %}
-                  <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ ii.eid }}.png" height="25" class="avatar-sm">
+                {% if ii.position == 'DEF' %}
+                  <img src="/static/img/team/{{ ii.first_name.strip }}.png" height="24" class="mr-2">
                 {% else %}
-                  <img src="/static/img/default.ico" height="25" class="mr-2">
+                  {% if ii.eid != -1 %}
+                    <img src="http://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{{ ii.eid }}.png" height="25" class="avatar-sm">
+                  {% else %}
+                    <img src="/static/img/default.ico" height="25" class="mr-2">
+                  {% endif %}
                 {% endif %}
               </div>
               <div class="a98ef3r3e">{{ ii.first_name }} {{ ii.last_name }}</div>

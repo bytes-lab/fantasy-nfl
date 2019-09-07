@@ -462,6 +462,8 @@ def gen_lineups(request):
                   'team': ii.team, 
                   'id': ii.id, 
                   'eid': ii.eid, 
+                  'position': ii.position,
+                  'first_name': ii.first_name,
                   'lineups': get_num_lineups(ii, lineups)} 
                 for ii in players if get_num_lineups(ii, lineups)]
     players_ = sorted(players_, key=lambda k: k['lineups'], reverse=True)
