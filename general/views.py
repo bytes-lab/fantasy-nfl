@@ -27,7 +27,7 @@ def _all_teams():
     return [ii['team'] for ii in Player.objects.values('team').distinct()]
 
 def players(request):
-    players = Player.objects.filter(data_source='FanDuel', available=True).order_by('first_name')
+    players = Player.objects.filter(data_source='FanDuel').order_by('first_name')
     return render(request, 'players.html', locals())
 
 
