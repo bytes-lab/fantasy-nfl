@@ -381,7 +381,7 @@ def player_match_up(request):
     ds = request.POST.get('ds')
     f_loc = request.POST.get('loc')
     games = request.POST.get('games').strip(';').split(';')
-    order = request.POST.get('order', 'team')
+    order = request.POST.get('order') or pos+'_rank'
 
     reverse = False if '-' in order else True
     order = order.replace('-', '')
@@ -407,7 +407,7 @@ def player_match_up(request):
             loc = game_info[player.team][1]
 
             if loc == f_loc or f_loc == 'all':
-                players_.append({
+                p = {
                     'id': player.id,
                     'uid': player.uid,
                     'eid': player.eid,
@@ -419,15 +419,16 @@ def player_match_up(request):
                     'salary': player.salary,
                     'afp': player.afp,
                     'yoa': player.yoa,
-                    'val': player.salary / 250 + 10,
-                    'team_stat': team_stat[player.team],
-                })
+                    'val': player.salary / 250 + 10
+                }
+
+                p.update(team_stat[player.team])
+                players_.append(p)
 
     players, _ = get_ranking(players_, 'afp', 'ppr', -1)
 
-    if pos != 'DEF':
-        players = sorted(players, key=lambda k: -k['team_stat'][pos+'_rank'])
-    players = sorted(players, key=lambda k: k[order], reverse=reverse)
+    if order != 'DEF_rank':
+        players = sorted(players, key=lambda k: k[order], reverse=reverse)
 
     template = 'player-board-{}.html'.format(pos.lower())
     return HttpResponse(render_to_string(template, locals()))

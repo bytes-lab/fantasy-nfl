@@ -1,5 +1,5 @@
 var sort_dir = 1,
-    order = 'team';
+    order = '';
 
 $(document).ready(function () {
   $( ".slider-range" ).slider({

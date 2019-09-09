@@ -18,7 +18,6 @@
     <th title="Total Yards DEF allowed in  Most Recent Game (Last Game Team Played)">LSTGM</th>
     <th title="Total Yards allowed in Home Games (Total)">HGMs</th>
     <th title="Passing Yards Averaged in Away Games (Total)">AGMs</th>
-    <th title="Injury status. Players that are out will not be listed on the Player Match-Up Board unless they were originally GTD then downgraded to OUT.">INJ</th>
     <th></th>
   </tr>
 </thead>
@@ -32,20 +31,19 @@
         <td colspan="2">$ {{ ii.salary|floatformat:0 }}</td>
         <td>{{ ii.afp|floatformat:1 }}</td>
         <td>{{ ii.val|floatformat:1 }}</td>
-        <td>{{ ii.team_stat.ps|floatformat:1 }}</td>
-        <td>{{ ii.team_stat.pa|floatformat:1 }}</td>
-        <td class="{{ ii.team_stat|pdiff_pt_color }}">
-          {{ ii.team_stat|pdiff_pt }}
+        <td>{{ ii.ps|floatformat:1 }}</td>
+        <td>{{ ii.pa|floatformat:1 }}</td>
+        <td class="{{ ii|pdiff_pt_color }}">
+          {{ ii|pdiff_pt }}
         </td>
-        <td>{{ ii.team_stat|tya }}</td>
-        <td>{{ ii.team_stat|tyda }}</td>
-        <td class="{{ ii.team_stat|pdiff_color }}">
-          {{ ii.team_stat|pdiff }}
+        <td>{{ ii|tya }}</td>
+        <td>{{ ii|tyda }}</td>
+        <td class="{{ ii|pdiff_color }}">
+          {{ ii|pdiff }}
         </td>
-        <td>{{ ii.team_stat|lstgm }}</td>
-        <td>{{ ii.team_stat|hgms }}</td>
-        <td>{{ ii.team_stat|agms }}</td>
-        <td class="{% if ii.inj != '-' %}text-danger{% endif %}">{{ ii.inj }}</td>
+        <td>{{ ii|lstgm }}</td>
+        <td>{{ ii|hgms }}</td>
+        <td>{{ ii|agms }}</td>
         <td><i class="far fa-thumbs-up fav {{ ii.uid|liked:request.session }}" data-uid="{{ ii.uid }}"></i></td>
       </tr>
     {% endfor %}

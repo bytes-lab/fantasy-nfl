@@ -44,14 +44,14 @@
         <td>{{ ii.afp|floatformat:1 }}</td>
         <td>{{ ii.val|floatformat:1 }}</td>
         <td>{{ ii.ppr }}</td>
-        <td class="text-center" style="color: #ffff00; font-weight: 700; background: {{ ii.team_stat.WR_color }};">
-            {{ ii.team_stat.WR_rank }}
+        <td class="text-center" style="color: #ffff00; font-weight: 700; background: {{ ii.WR_color }};">
+            {{ ii.WR_rank }}
         </td>
         <td>{{ ii.yoa|floatformat:1 }}</td>
-        <td>{{ ii.team_stat.rcyda|floatformat:1 }}</td>
-        <td>{{ ii.team_stat.l_rcy|floatformat:1 }}</td>
-        <td>{{ ii.team_stat.h_rcy|floatformat:1 }}</td>
-        <td>{{ ii.team_stat.a_rcy|floatformat:1 }}</td>
+        <td>{{ ii.rcyda|floatformat:1 }}</td>
+        <td>{{ ii.l_rcy|floatformat:1 }}</td>
+        <td>{{ ii.h_rcy|floatformat:1 }}</td>
+        <td>{{ ii.a_rcy|floatformat:1 }}</td>
         <td class="{% if ii.inj != '-' %}text-danger{% endif %}">{{ ii.inj }}</td>
         <td><i class="far fa-thumbs-up fav {{ ii.uid|liked:request.session }}" data-uid="{{ ii.uid }}"></i></td>
       </tr>
