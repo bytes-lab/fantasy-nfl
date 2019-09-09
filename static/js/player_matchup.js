@@ -1,3 +1,6 @@
+var sort_dir = 1,
+    order = 'team';
+
 $(document).ready(function () {
   $( ".slider-range" ).slider({
     range: true,
@@ -25,6 +28,20 @@ $(document).ready(function () {
     loadBoard();
   });
 
+  // sort
+  $('.player-board').on('click', '.sort-col', function() {
+    order = $(this).data('order');
+    if ($(this).data('bidirection')) {
+      sort_dir *= -1;
+      if (sort_dir < 0) {
+        order = '-' + order;
+      }
+    } else {
+      sort_dir = 1;
+    }
+    loadBoard();
+  })
+
   loadBoard();
 })
 
@@ -35,15 +52,16 @@ function loadBoard() {
   })
 
   var data = { 
-        loc: $('.filters select.loc').val(), 
-        ds: $('.filters select.ds').val(),
-        pos: $('.position-filter .nav-item a.active').html(),
-        min_afp: $('.afp').slider("values")[0],
-        max_afp: $('.afp').slider("values")[1],
-        min_sfp: $('.sfp').slider("values")[0],
-        max_sfp: $('.sfp').slider("values")[1],
-        games: games
-      };
+    loc: $('.filters select.loc').val(), 
+    ds: $('.filters select.ds').val(),
+    pos: $('.position-filter .nav-item a.active').html(),
+    min_afp: $('.afp').slider("values")[0],
+    max_afp: $('.afp').slider("values")[1],
+    min_sfp: $('.sfp').slider("values")[0],
+    max_sfp: $('.sfp').slider("values")[1],
+    games: games,
+    order: order
+  };
 
   $('.player-board').html('<div class="board-loading ml-1 mt-5">Loading ...</div>');
   $.post( "/player-match-up", data, function( data ) {

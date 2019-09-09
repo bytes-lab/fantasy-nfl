@@ -381,6 +381,10 @@ def player_match_up(request):
     ds = request.POST.get('ds')
     f_loc = request.POST.get('loc')
     games = request.POST.get('games').strip(';').split(';')
+    order = request.POST.get('order', 'team')
+
+    reverse = False if '-' in order else True
+    order = order.replace('-', '')
 
     game_info = {}
     teams_ = []
@@ -420,10 +424,10 @@ def player_match_up(request):
                 })
 
     players, _ = get_ranking(players_, 'afp', 'ppr', -1)
-    players = sorted(players, key=lambda k: k['team'])
 
     if pos != 'DEF':
         players = sorted(players, key=lambda k: -k['team_stat'][pos+'_rank'])
+    players = sorted(players, key=lambda k: k[order], reverse=reverse)
 
     template = 'player-board-{}.html'.format(pos.lower())
     return HttpResponse(render_to_string(template, locals()))
