@@ -427,10 +427,12 @@ def player_match_up(request):
 
     players, _ = get_ranking(players_, 'afp', 'ppr', -1)
 
-    if order != 'DEF_rank':
-        players = sorted(players, key=lambda k: k[order], reverse=reverse)
+    if order == 'DEF_rank':
+        order = 'ps'
 
+    players = sorted(players, key=lambda k: k[order], reverse=reverse)
     template = 'player-board-{}.html'.format(pos.lower())
+
     return HttpResponse(render_to_string(template, locals()))
 
 
