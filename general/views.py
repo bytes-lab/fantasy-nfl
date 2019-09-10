@@ -84,7 +84,7 @@ def get_games_(pid, loc, opp, season):
 
 def current_season():
     today = datetime.date.today()
-    return today.year if today > datetime.date(today.year, 9, 10) else today.year - 1
+    return today.year if today > datetime.date(today.year, 9, 19) else today.year - 1
 
 
 def player_detail(request, pid):

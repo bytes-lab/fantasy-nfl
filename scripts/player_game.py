@@ -38,15 +38,16 @@ def _C(val_dict, field):
     return float(val_dict.get(field, '0').strip() or '0')
 
 def scrape(week):
-    url = 'https://www.pro-football-reference.com/years/2018/week_{}.htm'.format(week)
+    url = 'https://www.pro-football-reference.com/years/2019/week_{}.htm'.format(week)
     print "||" + url
     response = urllib2.urlopen(url)
     r = response.read()
     soup = BeautifulSoup(r, "html.parser")
     links = []
     for ii in soup.find_all("td", {"class": "right gamelink"}):
-        link = ii.find('a').get('href')
-        links.append(link)
+        if ii.find('a').text.strip() == 'Final':
+            link = ii.find('a').get('href')
+            links.append(link)
 
     for game_link in links:
         url = 'https://www.pro-football-reference.com' + game_link
