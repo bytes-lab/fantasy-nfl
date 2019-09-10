@@ -196,7 +196,7 @@ table th {
 }
 
 .player-board {
-    max-height: calc(100vh - 300px); 
+    max-height: calc(100vh - 330px); 
     overflow-x: hidden;
 }
 
@@ -205,7 +205,7 @@ table th {
 }
 
 .player-board tbody {
-    max-height: calc(100vh - 390px); 
+    max-height: calc(100vh - 420px); 
     overflow-x: hidden;
     display: block;
 }
