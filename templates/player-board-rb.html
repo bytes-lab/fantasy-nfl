@@ -14,7 +14,7 @@
     <th title="Overall Average Fantasy Points" class="sort-col" data-order="afp" data-bidirection="true">AFP</th>
     <th title="Player’s value determined from Salary Drop down menu (Salary / 1,000 X 4 + 10 = VAL)">VAL</th>
     <th title="Player Positional Rank. The rank of that player at his position based upon that player’s Situation Fantasy Points.">PPR</th>
-    <th title="Ranking of the opponent’s defensive FPTs yielded to that player’s position. Higher the #, the better the matchup." class="sort-col" data-order="RB_rank" data-bidirection="true">&nbsp;&nbsp;OPR</th>
+    <th title="Ranking of the opponent’s defensive FPTs yielded to that player’s position. Higher the #, the better the matchup." class="sort-col" data-order="ruyda_rank" data-bidirection="true">&nbsp;&nbsp;OPR</th>
     <th title="Rushing Yards Player Averages Per Game (Overall)">RYOA/G</th>
     <th title="Rushing Yards Team Defense Allows Per Game (Overall)">RYDA/G</th>
     <th title="Rushing Yards Offense gained in  Most Recent Game (Last Game Team Played)">LSTGM</th>
@@ -44,8 +44,8 @@
         <td>{{ ii.afp|floatformat:1 }}</td>
         <td>{{ ii.val|floatformat:1 }}</td>
         <td>{{ ii.ppr }}</td>
-        <td class="text-center" style="color: #ffff00; font-weight: 700; background: {{ ii.RB_color }};">
-            {{ ii.RB_rank }}
+        <td class="text-center" style="color: #ffff00; font-weight: 700; background: {{ ii.ruyda_color }};">
+            {{ ii.ruyda_rank }}
         </td>
         <td>{{ ii.yoa|floatformat:1 }}</td>
         <td>{{ ii.ruyda|floatformat:1 }}</td>

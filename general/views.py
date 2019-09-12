@@ -258,24 +258,6 @@ def get_team_stat(team):
         'l_ruy': l_ruy,
     }
 
-    # FPA TM POS
-    tm_pos = []
-    # for each distinct match
-    for ii in a_teams_:
-        # players (games) in a match
-        players = a_teams.filter(date=ii['date'])
-
-        tm_pos_ = {}
-        # for each position
-        for pos in POSITION_GAME_MAP:
-            tm_pos_[pos] = players.filter(pos__in=POSITION_GAME_MAP[pos]).aggregate(Sum('fpts'))['fpts__sum'] or 0
-
-        if tm_pos_['QB'] > 0 and tm_pos_['RB'] > 0:
-            tm_pos.append(tm_pos_)
-
-    for pos in POSITION_GAME_MAP:
-        res[pos] = sum(ii[pos] for ii in tm_pos) / len(tm_pos) if len(tm_pos) else -1
-
     return res
 
 
@@ -359,7 +341,10 @@ def player_match_up(request):
     ds = request.POST.get('ds')
     f_loc = request.POST.get('loc')
     games = request.POST.get('games').strip(';').split(';')
-    order = request.POST.get('order') or pos+'_rank'
+
+    order = request.POST.get('order')
+    if not order:
+        order = 'pyda_rank' if pos in ['QB', 'WR', 'TE'] else 'ruyda_rank' if pos in ['RB'] else 'ps'
 
     reverse = False if '-' in order else True
     order = order.replace('-', '')
@@ -404,9 +389,6 @@ def player_match_up(request):
                 players_.append(p)
 
     players, _ = get_ranking(players_, 'afp', 'ppr', -1)
-
-    if order == 'DEF_rank':
-        order = 'ps'
 
     players = sorted(players, key=lambda k: k[order], reverse=reverse)
     template = 'player-board-{}.html'.format(pos.lower())
@@ -493,8 +475,9 @@ def build_TMS_cache():
     colors = linear_gradient('#90EE90', '#137B13', len(all_teams))['hex']
 
     team_stat = [get_team_stat(ii) for ii in all_teams]
-    for attr in POSITION_GAME_MAP:
-        team_stat, _ = get_ranking(team_stat, attr, attr+'_rank')
+
+    for attr in ['pyda', 'ruyda']:
+        team_stat, _ = get_ranking(team_stat, attr, attr+'_rank', -1)
         for ii in team_stat:
             ii[attr+'_color'] = colors[ii[attr+'_rank']-1]
 
