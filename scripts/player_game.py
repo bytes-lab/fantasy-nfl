@@ -128,6 +128,9 @@ def scrape(week):
                 name = sync('name', name)
                 uid = player.find("th", {"data-stat": "player"}).get('data-append-csv')
 
+                if not uid:
+                    continue
+
                 defaults = {
                     'name': name,
                     'week_num': week
