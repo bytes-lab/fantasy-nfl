@@ -149,19 +149,16 @@ def get_team_stat(team):
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     a_teams = PlayerGame.objects.filter(q)
     a_teams_ = a_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'),
-                                               rec_yds=Sum('rec_yds'))
+                                               rush_yds=Sum('rush_yds'))
 
     pyda = a_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
     ruyda = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-    rcyda = a_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
 
     ## last game
     a_teams_ = a_teams_.order_by('-date').first()
 
     l_pya = a_teams_.get('pass_yds') or 0
     l_ruya = a_teams_.get('rush_yds') or 0
-    l_rcya = a_teams_.get('rec_yds') or 0
 
     ## allowed points
     q = Q(opp=team) & Q(pos='DEF') & \
@@ -174,24 +171,20 @@ def get_team_stat(team):
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     a_teams = PlayerGame.objects.filter(q)
     a_teams_ = a_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'),
-                                               rec_yds=Sum('rec_yds'))
+                                               rush_yds=Sum('rush_yds'))
 
     h_pya = a_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
     h_ruya = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-    h_rcya = a_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
 
     loc = '@'        ## home
     q = Q(opp=team) & Q(game_location=loc) & \
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     a_teams = PlayerGame.objects.filter(q)
     a_teams_ = a_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'),
-                                               rec_yds=Sum('rec_yds'))
+                                               rush_yds=Sum('rush_yds'))
 
     a_pya = a_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
     a_ruya = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-    a_rcya = a_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
 
     # offense    
     loc = ''        ## home
@@ -199,43 +192,36 @@ def get_team_stat(team):
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     s_teams = PlayerGame.objects.filter(q)
     s_teams_ = s_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'),
-                                               rec_yds=Sum('rec_yds'))
+                                               rush_yds=Sum('rush_yds'))
 
     h_py = s_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
     h_ruy = s_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-    h_rcy = s_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
 
     loc = '@'       ## away
     q = Q(team=team) & Q(game_location=loc) & \
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     s_teams = PlayerGame.objects.filter(q)
     s_teams_ = s_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'),
-                                               rec_yds=Sum('rec_yds'))
+                                               rush_yds=Sum('rush_yds'))
 
     a_py = s_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
     a_ruy = s_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-    a_rcy = s_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
 
     ## overall
     q = Q(team=team) & \
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
     s_teams = PlayerGame.objects.filter(q)
     s_teams_ = s_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'),
-                                               rec_yds=Sum('rec_yds'))
+                                               rush_yds=Sum('rush_yds'))
 
     pya = s_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
     ruya = s_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-    rcya = s_teams_.aggregate(Avg('rec_yds'))['rec_yds__avg'] or 0
     
     ## last game
     s_teams_ = s_teams_.order_by('-date').first()
 
     l_py = s_teams_.get('pass_yds') or 0
     l_ruy = s_teams_.get('rush_yds') or 0
-    l_rcy = s_teams_.get('rec_yds') or 0
 
     ## scored points
     q = Q(team=team) & Q(pos='DEF') & \
@@ -247,37 +233,29 @@ def get_team_stat(team):
         'team': team,
         'pyda': pyda,
         'ruyda': ruyda,
-        'rcyda': rcyda,
         'pa': pa, 
 
         'l_pya': l_pya,
         'l_ruya': l_ruya,
-        'l_rcya': l_rcya,
 
         'h_pya': h_pya,
         'h_ruya': h_ruya,
-        'h_rcya': h_rcya,
 
         'a_pya': a_pya,
         'a_ruya': a_ruya,
-        'a_rcya': a_rcya,
 
         'pya': pya,
         'ruya': ruya,
-        'rcya': rcya,
         'ps': ps,
 
         'h_py': h_py,
         'h_ruy': h_ruy,
-        'h_rcy': h_rcy,
 
         'a_py': a_py,
         'a_ruy': a_ruy,
-        'a_rcy': a_rcy,
 
         'l_py': l_py,
         'l_ruy': l_ruy,
-        'l_rcy': l_rcy
     }
 
     # FPA TM POS

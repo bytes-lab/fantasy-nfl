@@ -18,40 +18,40 @@ def div_pcnt(val, de):
 
 @register.filter
 def lstgm(team_stat):
-    val = team_stat['l_pya'] + team_stat['l_ruya'] + team_stat['l_rcya']
+    val = team_stat['l_pya'] + team_stat['l_ruya']
     return '{:.1f}'.format(val)
 
 @register.filter
 def hgms(team_stat):
-    val = team_stat['h_pya'] + team_stat['h_ruya'] + team_stat['h_rcya']
+    val = team_stat['h_pya'] + team_stat['h_ruya']
     return '{:.1f}'.format(val)
 
 @register.filter
 def agms(team_stat):
-    val = team_stat['a_pya'] + team_stat['a_ruya'] + team_stat['a_rcya']
+    val = team_stat['a_pya'] + team_stat['a_ruya']
     return '{:.1f}'.format(val)
 
 @register.filter
 def tyda(team_stat):
-    val = team_stat['pyda'] + team_stat['ruyda'] + team_stat['rcyda']
+    val = team_stat['pyda'] + team_stat['ruyda']
     return '{:.1f}'.format(val)
 
 @register.filter
 def tya(team_stat):
-    val = team_stat['pya'] + team_stat['ruya'] + team_stat['rcya']
+    val = team_stat['pya'] + team_stat['ruya']
     return '{:.1f}'.format(val)
 
 @register.filter
 def pdiff_color(team_stat):
-    a_val = team_stat['pyda'] + team_stat['ruyda'] + team_stat['rcyda']
-    s_val = team_stat['pya'] + team_stat['ruya'] + team_stat['rcya']
+    a_val = team_stat['pyda'] + team_stat['ruyda']
+    s_val = team_stat['pya'] + team_stat['ruya']
 
     return 'text-danger' if a_val < s_val else 'text-success'
 
 @register.filter
 def pdiff(team_stat):
-    a_val = team_stat['pyda'] + team_stat['ruyda'] + team_stat['rcyda']
-    s_val = team_stat['pya'] + team_stat['ruya'] + team_stat['rcya']
+    a_val = team_stat['pyda'] + team_stat['ruyda']
+    s_val = team_stat['pya'] + team_stat['ruya']
 
     val = a_val - s_val
     fm = '{:.1f}' if val > 0 else '({:.1f})'
