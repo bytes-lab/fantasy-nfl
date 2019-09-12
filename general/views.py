@@ -339,7 +339,6 @@ def build_player_cache():
 def player_match_up(request):
     pos = request.POST.get('pos')
     ds = request.POST.get('ds')
-    f_loc = request.POST.get('loc')
     games = request.POST.get('games').strip(';').split(';')
 
     order = request.POST.get('order')
@@ -369,24 +368,23 @@ def player_match_up(request):
             vs = game_info[player.team][0]
             loc = game_info[player.team][1]
 
-            if loc == f_loc or f_loc == 'all':
-                p = {
-                    'id': player.id,
-                    'uid': player.uid,
-                    'eid': player.eid,
-                    'name': '{} {}'.format(player.first_name, player.last_name),
-                    'team': player.team,
-                    'loc': loc,
-                    'vs': vs,
-                    'inj': player.injury,
-                    'salary': player.salary,
-                    'afp': player.afp,
-                    'yoa': player.yoa,
-                    'val': player.salary / 250 + 10
-                }
+            p = {
+                'id': player.id,
+                'uid': player.uid,
+                'eid': player.eid,
+                'name': '{} {}'.format(player.first_name, player.last_name),
+                'team': player.team,
+                'loc': loc,
+                'vs': vs,
+                'inj': player.injury,
+                'salary': player.salary,
+                'afp': player.afp,
+                'yoa': player.yoa,
+                'val': player.salary / 250 + 10
+            }
 
-                p.update(team_stat[player.team])
-                players_.append(p)
+            p.update(team_stat[player.team])
+            players_.append(p)
 
     players, _ = get_ranking(players_, 'afp', 'ppr', -1)
 
@@ -477,7 +475,7 @@ def build_TMS_cache():
     team_stat = [get_team_stat(ii) for ii in all_teams]
 
     for attr in ['pyda', 'ruyda']:
-        team_stat, _ = get_ranking(team_stat, attr, attr+'_rank', -1)
+        team_stat, _ = get_ranking(team_stat, attr, attr+'_rank')
         for ii in team_stat:
             ii[attr+'_color'] = colors[ii[attr+'_rank']-1]
 

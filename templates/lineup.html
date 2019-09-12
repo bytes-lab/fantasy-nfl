@@ -9,7 +9,10 @@
       <div class="col-md-12 mb-4">
         <h5 class="mb-4">Lineup Optimizer</h5>
 
-        <h6 class="text-success">- Game Slates</h6>
+        <h6 class="text-success">
+          - Game Slates
+          <input type="checkbox" checked="" class="ml-2" onclick="choose_all(this)">
+        </h6>
         <div class="slate pl-3 pt-1 mb-2">
           {% for game in games %}
             <div class="slate-item">

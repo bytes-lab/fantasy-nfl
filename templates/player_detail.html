@@ -6,14 +6,18 @@
   <div class="row">
     <div class="col-md-4">
       <div class="mr-3 float-left text-center _g49ijf">
-        {% if player.eid != -1 %}
-          {% if player.exp != 0 %}
-            <img src="/static/media/normal/{{ player.eid }}.png" height="240" class="avatar-lg-{{ player.exp }}">
-          {% else %}
-            <img src="/static/media/normal/{{ player.eid }}.png" height="200" class="avatar-lg">
-          {% endif %}
+        {% if player.position == 'DEF' %}
+          <img src="/static/img/team/{{ player.first_name.strip }}.png" height="160" class="mr-2">
         {% else %}
-          <img src="/static/img/default.ico" width="120" class="mx-2 mb-1">
+          {% if player.eid != -1 %}
+            {% if player.exp != 0 %}
+              <img src="/static/media/normal/{{ player.eid }}.png" height="240" class="avatar-lg-{{ player.exp }}">
+            {% else %}
+              <img src="/static/media/normal/{{ player.eid }}.png" height="200" class="avatar-lg">
+            {% endif %}
+          {% else %}
+            <img src="/static/img/default.ico" width="120" class="mx-2 mb-1">
+          {% endif %}
         {% endif %}
 
         <div class="clearfix"></div>
