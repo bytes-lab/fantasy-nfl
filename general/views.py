@@ -84,7 +84,7 @@ def get_games_(pid, loc, opp, season):
 
 def current_season():
     today = datetime.date.today()
-    return today.year if today > datetime.date(today.year, 9, 19) else today.year - 1
+    return today.year if today > datetime.date(today.year, 9, 1) else today.year - 1
 
 
 def player_detail(request, pid):
@@ -92,7 +92,6 @@ def player_detail(request, pid):
     year = current_season()
     games = get_games_(pid, 'all', '', year)
     avg_fpts = games.aggregate(Avg('fpts'))
-    year = 2019
 
     return render(request, 'player_detail.html', locals())
 
