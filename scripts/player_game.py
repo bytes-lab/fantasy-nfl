@@ -62,7 +62,7 @@ def scrape(week):
 
         # build the pos dict
         pos_dict = {}
-        for table_id in ["home_snap_counts", "vis_snap_counts"]:
+        for table_id in ["home_starters", "vis_starters"]:
             tbl_text = body.split('<div class="overthrow table_container" id="div_{}">'.format(table_id))[1].split('</div>')[0]
             soup = BeautifulSoup(tbl_text, "html.parser")
             table = soup.find("table", {"id": table_id})
