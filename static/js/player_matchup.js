@@ -45,6 +45,11 @@ $(document).ready(function () {
   loadBoard();
 })
 
+function choose_all (obj) {
+  $('input[type="checkbox"]').prop("checked", $(obj).prop('checked'));
+  loadBoard();
+}
+
 function loadBoard() {
   var games = '';
   $('.slate').find('input:checked').each(function() {

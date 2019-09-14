@@ -353,6 +353,8 @@ def player_match_up(request):
     game_info = {}
     teams_ = []
     for game in games:
+        if not game:
+            continue
         teams = game.split('-') # home-away
         game_info[teams[0]] = [teams[1], '', '@']   # vs, loc, loc_
         game_info[teams[1]] = [teams[0], '@', '']

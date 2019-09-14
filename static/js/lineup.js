@@ -88,6 +88,7 @@ function pr_click(obj) {
 
 function choose_all (obj) {
   $('input[type="checkbox"]').prop("checked", $(obj).prop('checked'));
+  getPlayers();
 }
 
 function getPlayers () {
