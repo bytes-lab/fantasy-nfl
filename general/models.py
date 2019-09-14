@@ -71,6 +71,7 @@ class PlayerGame(models.Model):
     opp = models.CharField("Vs", max_length=10)
     game_result = models.CharField("W-L", max_length=15)
     pos = models.CharField(max_length=5)
+    
     pass_cmp = models.IntegerField(default=0)
     pass_att = models.IntegerField(default=0)
     pass_cmp_perc = models.FloatField(default=0)

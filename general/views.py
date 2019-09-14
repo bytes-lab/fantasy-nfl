@@ -20,7 +20,6 @@ from general.utils import *
 
 
 POSITION = ['QB', 'RB', 'WR', 'TE', 'DEF']
-POSITION_GAME_MAP = {'QB': ['QB'], 'RB': ['RB', 'FB'], 'WR': ['WR'], 'TE': ['TE']}
 
 def _get_game_today():
     return Game.objects.all()
@@ -276,33 +275,6 @@ def get_player(full_name, team):
     return player
 
 
-def get_win_loss(team):
-    season = current_season()
-    q = Q(team=team) & \
-        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-
-    team_games = PlayerGame.objects.filter(q)
-    game_results = team_games.values('date', 'game_result').distinct()
-    wins = game_results.filter(game_result='W').count()
-    losses = game_results.filter(game_result='L').count()
-    return wins, losses
-
-
-def filter_players_fpa(team, min_afp, max_afp):
-    try:
-        info = json.loads(TMSCache.objects.filter(team=team, type=1).first().body)
-        players = []
-
-        for ii in range(len(info['players'])):
-            afp = info['players'][ii]['afp']
-            if min_afp <= afp <= max_afp:
-                players.append(info['players'][ii])
-        info['players'] = players
-        return info
-    except Exception as e:
-        return {}
-
-
 def build_player_cache():
     # player info -> build cache
     season = current_season()
@@ -482,7 +454,7 @@ def download_game_report(request):
     qs = PlayerGame.objects.filter(q)
     fields = [f.name for f in PlayerGame._meta.get_fields() 
               if f.name not in ['id', 'uid', 'updated_at', 'created_at']]
-    path = "/tmp/nba_games({}@{}).csv".format(game.visit_team, game.home_team)
+    path = "/tmp/nfl_games({}@{}).csv".format(game.visit_team, game.home_team)
     return download_response(qs, path, fields)
 
 
