@@ -16,6 +16,8 @@ from django.db.models import Avg, Q, Sum
 from general.models import *
 from general.lineup import *
 from general.color import *
+from general.utils import *
+
 
 POSITION = ['QB', 'RB', 'WR', 'TE', 'DEF']
 POSITION_GAME_MAP = {'QB': ['QB'], 'RB': ['RB', 'FB'], 'WR': ['WR'], 'TE': ['TE']}
@@ -466,6 +468,20 @@ def update_point(request):
     request.session['cus_proj'] = cus_proj
 
     return HttpResponse('')
+
+
+def download_game_report(request):
+    game = request.GET.get('game')
+    game = Game.objects.get(id=game)
+    season = current_season() - 1
+    q = Q(team__in=[game.home_team, game.visit_team]) & \
+        Q(opp__in=[game.home_team, game.visit_team]) & \
+        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
+    qs = PlayerGame.objects.filter(q)
+    fields = [f.name for f in PlayerGame._meta.get_fields() 
+              if f.name not in ['id', 'uid', 'updated_at', 'created_at']]
+    path = "/tmp/nba_games({}@{}).csv".format(game.visit_team, game.home_team)
+    return download_response(qs, path, fields)
 
 
 def build_TMS_cache():

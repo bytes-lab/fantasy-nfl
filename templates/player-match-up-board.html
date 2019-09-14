@@ -12,7 +12,10 @@
     <div class="col-md-12">
       <h5 class="mb-3">Player / Team Match-Up Board</h5>
 
-      <h6 class="text-success">- Game Slates</h6>
+      <h6 class="text-success">
+        - Game Slates
+        <input type="checkbox" checked="" class="ml-2" onclick="choose_all(this)">
+      </h6>
       <div class="slate pl-3 pt-1 mb-2">
         {% for game in games %}
           <div class="slate-item">
@@ -22,6 +25,7 @@
               </label>
             </div>
             <div class="ml-4 text-secondary">( {{ game.date }} )</div>
+            <a href="/download_game_report?game={{ game.id }}" id="download_game_report" class="mt-1 d-block text-secondary"><i class="fa fa-download"></i> Report</a>
           </div>
         {% endfor %}
       </div>
