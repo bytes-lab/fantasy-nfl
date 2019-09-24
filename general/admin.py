@@ -3,7 +3,10 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
+from rangefilter.filter import DateRangeFilter
+
 from general.models import *
+from general.utils import *
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ['uid', 'eid', 'first_name', 'last_name', 'position', 'team', 'opponent', 'salary', 
@@ -15,7 +18,17 @@ class PlayerAdmin(admin.ModelAdmin):
 class PlayerGameAdmin(admin.ModelAdmin):
     list_display = ['name', 'uid', 'pos', 'team', 'game_location', 'opp', 'game_result', 'fpts', 'date']
     search_fields = ['name']
-    list_filter = ['game_location', 'pos', 'team', 'opp']
+    list_filter = [('date', DateRangeFilter), 'game_location', 'pos', 'team', 'opp']
+    actions = ['export_games']
+
+    def export_games(self, request, queryset):
+        fields = [f.name for f in PlayerGame._meta.get_fields() 
+                  if f.name not in ['id', 'is_new']]
+        path = "/tmp/nba_games.csv"
+
+        return download_response(queryset, path, fields)
+
+    export_games.short_description = "Export CSV" 
 
 
 class GameAdmin(admin.ModelAdmin):
