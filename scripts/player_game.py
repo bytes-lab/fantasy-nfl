@@ -1,5 +1,5 @@
 """
-Use Pro Football Reference
+Use Pro Football Reference for player stat
 """
 import re
 import os
@@ -78,33 +78,6 @@ def get_game_links(week):
     return links
 
 
-def build_team_data(team, opp, loc, date, week):
-    team_ = Player.objects.filter(team=team, position='DEF').first()
-    name = '{} {}'.format(team_.first_name, team_.last_name)
-
-    defaults = {
-        'name': name,
-        'team': team,
-        'opp': opp,
-        'pos': 'DEF',
-        'game_location': loc, 
-        'week_num': week,
-        'date': date
-    }
-
-    fields = list(FIELDS) + ['fpts']
-    fields.remove('team')
-
-    metric_mapping = { field: Sum(field) for field in fields }
-    qs = PlayerGame.objects.filter(date=date, team=team).exclude(pos='DEF').values('date')
-    result = qs.annotate(**metric_mapping).first()
-
-    for field in fields:
-        defaults[field] = result[field]
-
-    PlayerGame.objects.update_or_create(name=name, date=date, defaults=defaults)
-
-
 def scrape(week):
 
     for game_link in get_game_links(week):
@@ -136,33 +109,6 @@ def scrape(week):
 
         game_date = game_link[11:19]
         date = datetime.datetime.strptime(game_date, '%Y%m%d')
-
-        # store team score
-        defaults = {
-            'name': home_team,
-            'team': home_team,
-            'opp': away_team,
-            'pos': 'DEF',
-            'game_location': '', 
-            'fpts': home_score,
-            'week_num': week,
-            'date': date
-        }
-
-        PlayerGame.objects.update_or_create(name=home_team, date=date, defaults=defaults)
-
-        defaults = {
-            'name': away_team,
-            'team': away_team,
-            'opp': home_team,
-            'pos': 'DEF',
-            'game_location': '@', 
-            'fpts': away_score,
-            'week_num': week,
-            'date': date
-        }
-
-        PlayerGame.objects.update_or_create(name=away_team, date=date, defaults=defaults)
 
         # build data for players
         for player in players:
@@ -197,9 +143,6 @@ def scrape(week):
                              + 6 * _C(defaults, 'rec_td') + 0.5 * _C(defaults, 'rec')
 
             PlayerGame.objects.update_or_create(uid=uid, date=date, defaults=defaults)
-
-        build_team_data(home_team, away_team, '', date, week)
-        build_team_data(away_team, home_team, '@', date, week)
 
 
 if __name__ == "__main__":

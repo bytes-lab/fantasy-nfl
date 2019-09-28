@@ -72,18 +72,18 @@ class PlayerGame(models.Model):
     game_result = models.CharField("W-L", max_length=15)
     pos = models.CharField(max_length=5)
     
-    pass_cmp = models.IntegerField(default=0)
-    pass_att = models.IntegerField(default=0)
-    pass_cmp_perc = models.FloatField(default=0)
-    pass_yds = models.IntegerField(default=0)
-    pass_td = models.IntegerField(default=0)
-    pass_int = models.IntegerField(default=0)
-    pass_rating = models.FloatField(default=0)
-    pass_sacked = models.IntegerField(default=0)
-    pass_long = models.IntegerField(default=0)
-    pass_sacked_yds = models.IntegerField(default=0)
-    pass_yds_per_att = models.FloatField(default=0)
-    pass_adj_yds_per_att = models.FloatField(default=0)
+    pass_cmp = models.IntegerField(default=0)       # offense score - DEF
+    pass_att = models.IntegerField(default=0)       # defense score - DEF
+    pass_cmp_perc = models.FloatField(default=0)    # offense 1st down - DEF
+    pass_yds = models.IntegerField(default=0)       # offense total yards - DEF
+    pass_td = models.IntegerField(default=0)        # offense passing yards - DEF
+    pass_int = models.IntegerField(default=0)       # offense rushing yards - DEF
+    pass_rating = models.FloatField(default=0)      # offense turnover lost - DEF
+    pass_sacked = models.IntegerField(default=0)        # defense 1st down - DEF
+    pass_long = models.IntegerField(default=0)          # defense total yards - DEF
+    pass_sacked_yds = models.IntegerField(default=0)    # defense passing yards - DEF
+    pass_yds_per_att = models.FloatField(default=0)     # defense rushing yards - DEF
+    pass_adj_yds_per_att = models.FloatField(default=0) # defense turnover lost - DEF
     rush_att = models.IntegerField(default=0)
     rush_yds = models.IntegerField(default=0)
     rush_yds_per_att = models.FloatField(null=True, blank=True)
@@ -102,7 +102,7 @@ class PlayerGame(models.Model):
     week_num = models.IntegerField()
 
     date = models.DateField()
-    fpts = models.FloatField("FPTS", default=-1)    # score for DEF
+    fpts = models.FloatField("FPTS", default=-1)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
