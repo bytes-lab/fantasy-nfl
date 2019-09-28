@@ -1,0 +1,140 @@
+{% load extra %}
+<table class="table table-responsive-md" onmouseup="getStats()">
+  <tr class="_r883kj3t">
+    <th colspan="3"></th>
+    <th colspan="2">Score</th>
+    <th colspan="5">Offense</th>
+    <th colspan="5" style="border-right: 1px solid #64b7e7;">Defense</th>
+  </tr>
+  <tr>
+    <td>
+      <table>
+        <tr><th>H/A</th></tr>
+        {% for ii in games %}
+        <tr><td>{% if ii.game_location %} {{ ii.game_location }} {% else %} &nbsp; {% endif %}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th>Opp</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.opp }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th>&nbsp;</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.game_result|sgr }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">Tm</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_cmp }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">Opp</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_att }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">1stD</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_cmp_perc|floatformat:0 }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">TotYd</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_yds }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">PassY</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_td }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">RushY</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_int }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">TO</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_rating|floatformat:0 }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">1stD</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_sacked|floatformat:0 }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+
+    <td>
+      <table>
+        <tr><th class="num">TotYd</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_long }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">PassY</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_sacked_yds }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">RushY</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_yds_per_att|floatformat:0 }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th class="num">TO</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.pass_adj_yds_per_att|floatformat:0 }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td>
+      <table>
+        <tr><th>Date</th></tr>
+        {% for ii in games %}
+        <tr><td>{{ ii.date|date:'m/d/Y' }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+  </tr>
+</table>

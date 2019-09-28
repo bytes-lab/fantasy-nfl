@@ -66,7 +66,7 @@ def main(teams):
             defaults = {
                 'pos': 'DEF',
                 'team': _team,
-                'name': team.first_name,
+                'name': '{} {}'.format(team.first_name, team.last_name),
                 'week_num': ti.find("th", {"data-stat": 'week_num'}).text.strip(),
                 'game_location': ti.find("td", {"data-stat": 'game_location'}).text.strip()
             }

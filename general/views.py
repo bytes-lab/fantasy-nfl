@@ -110,8 +110,11 @@ def player_games(request):
     for ii in sorted(set(games.values_list('opp', flat=True).distinct())):
         opps += '<option>{}</option>'.format(ii)
 
+    player = Player.objects.get(id=pid)
+    template = 'game-list_def.html' if player.position == 'DEF' else 'game-list_.html'
+
     result = {
-        'game_table': render_to_string('game-list_.html', locals()),
+        'game_table': render_to_string(template, locals()),
         'chart': [[ii.date.strftime('%Y/%m/%d'), ii.fpts] for ii in games],
         'opps': opps
     }
@@ -122,11 +125,6 @@ def player_games(request):
 def player_match_up_board(request):
     games = _get_game_today()
     return render(request, 'player-match-up-board.html', locals())
-
-
-def formatted_diff(val):
-    fm = '{:.1f}' if val > 0 else '({:.1f})'
-    return fm.format(abs(val))
 
 
 def get_ranking(players, sattr, dattr, order=1):
@@ -272,17 +270,6 @@ def build_player_cache():
             afp=afp,
             yoa=yoa
         )
-
-    ## for DEF, get afp -> allowance
-    teams = Player.objects.filter(data_source='FanDuel', available=True, position='DEF')
-    for team in teams:
-        q = Q(opp=team.team)& \
-            Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-        a_teams = PlayerGame.objects.filter(q)
-        a_teams_ = a_teams.values('date').annotate(fpts=Sum('fpts'))
-        fpa = a_teams_.aggregate(Avg('fpts'))['fpts__avg'] or 0
-
-        Player.objects.filter(uid=team.uid).update(afp=fpa)
 
 
 @csrf_exempt
