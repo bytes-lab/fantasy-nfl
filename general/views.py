@@ -146,105 +146,81 @@ def get_team_stat(team):
     season = current_season()
     # defense allowance
     ## for overall
-    q = Q(opp=team)& \
-        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-    a_teams = PlayerGame.objects.filter(q)
-    a_teams_ = a_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'))
-
-    pyda = a_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
-    ruyda = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-
-    ## last game
-    a_teams_ = a_teams_.order_by('-date').first()
-
-    l_pya = a_teams_.get('pass_yds') or 0
-    l_ruya = a_teams_.get('rush_yds') or 0
-
-    ## allowed points
-    q = Q(opp=team) & Q(pos='DEF') & \
-        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-    a_teams = PlayerGame.objects.filter(q)
-    pa = a_teams.aggregate(Avg('fpts'))['fpts__avg'] or 0
-
-    loc = ''        ## home
-    q = Q(opp=team) & Q(game_location=loc) & \
-        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-    a_teams = PlayerGame.objects.filter(q)
-    a_teams_ = a_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'))
-
-    h_pya = a_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
-    h_ruya = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-
-    loc = '@'        ## home
-    q = Q(opp=team) & Q(game_location=loc) & \
-        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-    a_teams = PlayerGame.objects.filter(q)
-    a_teams_ = a_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'))
-
-    a_pya = a_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
-    a_ruya = a_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-
-    # offense    
-    loc = ''        ## home
-    q = Q(team=team) & Q(game_location=loc) & \
-        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-    s_teams = PlayerGame.objects.filter(q)
-    s_teams_ = s_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'))
-
-    h_py = s_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
-    h_ruy = s_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-
-    loc = '@'       ## away
-    q = Q(team=team) & Q(game_location=loc) & \
-        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-    s_teams = PlayerGame.objects.filter(q)
-    s_teams_ = s_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'))
-
-    a_py = s_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
-    a_ruy = s_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-
-    ## overall
-    q = Q(team=team) & \
-        Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-    s_teams = PlayerGame.objects.filter(q)
-    s_teams_ = s_teams.values('date').annotate(pass_yds=Sum('pass_yds'), 
-                                               rush_yds=Sum('rush_yds'))
-
-    pya = s_teams_.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0
-    ruya = s_teams_.aggregate(Avg('rush_yds'))['rush_yds__avg'] or 0
-    
-    ## last game
-    s_teams_ = s_teams_.order_by('-date').first()
-
-    l_py = s_teams_.get('pass_yds') or 0
-    l_ruy = s_teams_.get('rush_yds') or 0
-
-    ## scored points
     q = Q(team=team) & Q(pos='DEF') & \
         Q(date__range=[datetime.date(season, 9, 1), datetime.date(season, 12, 31)])
-    s_teams = PlayerGame.objects.filter(q)
-    ps = s_teams.aggregate(Avg('fpts'))['fpts__avg'] or 0
+    a_teams = PlayerGame.objects.filter(q)
+
+    tyda = a_teams.aggregate(Avg('pass_long'))['pass_long__avg'] or 0 
+    pyda = a_teams.aggregate(Avg('pass_sacked_yds'))['pass_sacked_yds__avg'] or 0
+    ruyda = a_teams.aggregate(Avg('pass_yds_per_att'))['pass_yds_per_att__avg'] or 0
+
+    ## last game
+    a_teams_ = a_teams.order_by('-date').first()
+
+    l_tya = a_teams_.pass_long
+    l_pya = a_teams_.pass_sacked_yds
+    l_ruya = a_teams_.pass_yds_per_att
+
+    ## allowed points
+    pa = a_teams.aggregate(Avg('pass_att'))['pass_att__avg'] or 0
+
+    ## home
+    ha_teams = a_teams.filter(game_location='')
+
+    h_tyda = ha_teams.aggregate(Avg('pass_long'))['pass_long__avg'] or 0 
+    h_pya = ha_teams.aggregate(Avg('pass_sacked_yds'))['pass_sacked_yds__avg'] or 0
+    h_ruya = ha_teams.aggregate(Avg('pass_yds_per_att'))['pass_yds_per_att__avg'] or 0
+
+    ## away
+    aa_teams = a_teams.filter(game_location='@')
+
+    a_tyda = aa_teams.aggregate(Avg('pass_long'))['pass_long__avg'] or 0 
+    a_pya = aa_teams.aggregate(Avg('pass_sacked_yds'))['pass_sacked_yds__avg'] or 0
+    a_ruya = aa_teams.aggregate(Avg('pass_yds_per_att'))['pass_yds_per_att__avg'] or 0
+
+    # offense    
+
+    ## home
+    h_py = ha_teams.aggregate(Avg('pass_td'))['pass_td__avg'] or 0
+    h_ruy = ha_teams.aggregate(Avg('pass_int'))['pass_int__avg'] or 0
+
+    ## away
+    a_py = aa_teams.aggregate(Avg('pass_td'))['pass_td__avg'] or 0
+    a_ruy = aa_teams.aggregate(Avg('pass_int'))['pass_int__avg'] or 0
+
+    ## overall
+    tya = a_teams.aggregate(Avg('pass_yds'))['pass_yds__avg'] or 0 
+    pya = a_teams.aggregate(Avg('pass_td'))['pass_td__avg'] or 0
+    ruya = a_teams.aggregate(Avg('pass_int'))['pass_int__avg'] or 0
+    
+    ## last game
+    l_py = a_teams_.pass_td
+    l_ruy = a_teams_.pass_int
+
+    ## scored points
+    ps = a_teams.aggregate(Avg('pass_cmp'))['pass_cmp__avg'] or 0
 
     res = {
         'team': team,
+
+        'tyda': tyda,
         'pyda': pyda,
         'ruyda': ruyda,
         'pa': pa, 
 
+        'l_tya': l_tya,
         'l_pya': l_pya,
         'l_ruya': l_ruya,
 
+        'h_tyda': h_tyda,
         'h_pya': h_pya,
         'h_ruya': h_ruya,
 
+        'a_tyda': a_tyda,
         'a_pya': a_pya,
         'a_ruya': a_ruya,
 
+        'tya': tya,
         'pya': pya,
         'ruya': ruya,
         'ps': ps,

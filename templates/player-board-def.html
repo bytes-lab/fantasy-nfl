@@ -17,7 +17,7 @@
     <th title="Highlight # in Green when positive for DEFENSE Highlight # in RED when positive for OFFENSE.">TDIFF</th>
     <th title="Total Yards DEF allowed in  Most Recent Game (Last Game Team Played)">LSTGM</th>
     <th title="Total Yards allowed in Home Games (Total)">HGMs</th>
-    <th title="Passing Yards Averaged in Away Games (Total)">AGMs</th>
+    <th title="Total Yards allowed in Away Games (Total)">AGMs</th>
     <th></th>
   </tr>
 </thead>
@@ -36,14 +36,14 @@
         <td class="{{ ii|pdiff_pt_color }}">
           {{ ii|pdiff_pt }}
         </td>
-        <td>{{ ii|tya }}</td>
-        <td>{{ ii|tyda }}</td>
+        <td>{{ ii.tya|floatformat:1 }}</td>
+        <td>{{ ii.tyda|floatformat:1 }}</td>
         <td class="{{ ii|pdiff_color }}">
           {{ ii|pdiff }}
         </td>
-        <td>{{ ii|lstgm }}</td>
-        <td>{{ ii|hgms }}</td>
-        <td>{{ ii|agms }}</td>
+        <td>{{ ii.l_tya|floatformat:1 }}</td>
+        <td>{{ ii.h_tyda|floatformat:1 }}</td>
+        <td>{{ ii.a_tyda|floatformat:1 }}</td>
         <td><i class="far fa-thumbs-up fav {{ ii.uid|liked:request.session }}" data-uid="{{ ii.uid }}"></i></td>
       </tr>
     {% endfor %}

@@ -17,43 +17,12 @@ def div_pcnt(val, de):
     return '{:.2f}'.format(val * 100.0 / de)
 
 @register.filter
-def lstgm(team_stat):
-    val = team_stat['l_pya'] + team_stat['l_ruya']
-    return '{:.1f}'.format(val)
-
-@register.filter
-def hgms(team_stat):
-    val = team_stat['h_pya'] + team_stat['h_ruya']
-    return '{:.1f}'.format(val)
-
-@register.filter
-def agms(team_stat):
-    val = team_stat['a_pya'] + team_stat['a_ruya']
-    return '{:.1f}'.format(val)
-
-@register.filter
-def tyda(team_stat):
-    val = team_stat['pyda'] + team_stat['ruyda']
-    return '{:.1f}'.format(val)
-
-@register.filter
-def tya(team_stat):
-    val = team_stat['pya'] + team_stat['ruya']
-    return '{:.1f}'.format(val)
-
-@register.filter
 def pdiff_color(team_stat):
-    a_val = team_stat['pyda'] + team_stat['ruyda']
-    s_val = team_stat['pya'] + team_stat['ruya']
-
-    return 'text-danger' if a_val < s_val else 'text-success'
+    return 'text-danger' if team_stat['tyda'] < team_stat['tya'] else 'text-success'
 
 @register.filter
 def pdiff(team_stat):
-    a_val = team_stat['pyda'] + team_stat['ruyda']
-    s_val = team_stat['pya'] + team_stat['ruya']
-
-    val = a_val - s_val
+    val = team_stat['tyda'] - team_stat['tya']
     fm = '{:.1f}' if val > 0 else '({:.1f})'
     return fm.format(abs(val))
 
@@ -80,25 +49,6 @@ def aya(player):
 def liked(uid, session):
     fav = session.get('fav', [])
     return 'done' if str(uid) in fav else ''
-
-@register.filter 
-def hot_sfp(player):
-    if player['sfp'] >= player['afp'] + 5:
-        return 'text-danger font-weight-bold'  
-    elif player['sfp'] <= player['afp'] - 5:
-        return 'text-primary font-weight-bold'
-    else:
-        return '' 
-
-@register.filter
-def ou_ml(game, team):
-    if not game.ml:
-        return ''
-
-    if team in game.ml:
-        return '( {} )'.format(game.ml.split(' ')[-1])
-    else:
-        return '( {} )'.format(int(game.ou))
 
 @register.filter
 def sgr(s):
