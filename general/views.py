@@ -356,7 +356,7 @@ def player_match_up(request):
                 'salary': player.salary,
                 'afp': player.afp,
                 'yoa': player.yoa,
-                'val': player.salary / 250 + 10
+                'val': player.value
             }
 
             p.update(team_stat[player.team])

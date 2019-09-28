@@ -39,8 +39,6 @@
                 <th>POS</th>
                 <th>Team</th>
                 <th>Salary</th><th>&nbsp;</th>
-                <th>AMPG</th>
-                <th>SMPG</th>
                 <th>AFP</th>
                 <th>SFP</th>
                 <th>L3A</th>
@@ -66,8 +64,6 @@
                     <td>{{ ii.position }}</td>
                     <td>{{ ii.team }}</td>
                     <td colspan="2">$ {{ ii.salary|floatformat:0 }}</td>
-                    <td>{% if ii.minutes > -1 %}{{ ii.minutes|floatformat:1 }}{% else %}-{% endif %}</td>
-                    <td>{% if ii.over_under > -1 %}{{ ii.over_under|floatformat:1 }}{% else %}-{% endif %}</td>
                     <td>{% if ii.afp > -1 %}{{ ii.afp|floatformat:1 }}{% else %}-{% endif %}</td>
                     <td>{% if ii.proj_site > -1 %}{{ ii.proj_site|floatformat:1 }}{% else %}-{% endif %}</td>
                     <td>{% if ii.salary_original > -1 %}{{ ii.salary_original|floatformat:1 }}{% else %}-{% endif %}</td>

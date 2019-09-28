@@ -33,6 +33,7 @@ def get_players(data_source, teams):
                 defaults['injury'] = html2text.html2text(ii['injury']).strip().upper()
                 defaults['first_name'] = ii['first_name'].replace('.', '')
                 defaults['last_name'] = ii['last_name'].replace('.', '')
+                defaults['value'] = ii['salary'] / 250.0 + 10
 
                 Player.objects.update_or_create(uid=ii['id'], data_source=data_source, defaults=defaults)
     except:
