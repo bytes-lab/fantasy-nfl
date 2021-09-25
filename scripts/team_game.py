@@ -54,7 +54,7 @@ def main(teams):
         _team = team.team
         __team = team_map.get(_team, _team)
         url = 'https://www.pro-football-reference.com/teams/{}/{}.htm'.format(__team.lower(), year)
-        print (url)
+        print(url)
         response = urllib2.urlopen(url)
         body = response.read()
 

@@ -64,7 +64,7 @@ def build_pos_dict(html):
 
 def get_game_links(week):
     url = 'https://www.pro-football-reference.com/years/2019/week_{}.htm'.format(week)
-    print "||" + url
+    print("||" + url)
     response = urllib2.urlopen(url)
     r = response.read()
     soup = BeautifulSoup(r, "html.parser")
@@ -82,7 +82,7 @@ def scrape(week):
 
     for game_link in get_game_links(week):
         url = 'https://www.pro-football-reference.com' + game_link
-        print "|| - " + url
+        print("|| - " + url)
         response = urllib2.urlopen(url)
         body = response.read()
 

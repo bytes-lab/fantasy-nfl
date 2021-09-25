@@ -25,7 +25,7 @@ def get_players(data_source, teams):
               'site={}&projections=&type={}&slate={}'.format(data_source, type, slate)
         players = requests.get(url).json()
         if len(players) > 10:
-            print data_source, len(players)
+            print(data_source, len(players))
             for ii in players:
                 defaults = { key: str(ii[key]).replace(',', '') for key in fields }
                 defaults['position'] = ii['position'] if ii['position'] != 'D' else 'DEF'

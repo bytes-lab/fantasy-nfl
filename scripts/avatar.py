@@ -36,7 +36,7 @@ def get_avatars(teams):
     for team in teams:
         # try:
             url = 'http://site.web.api.espn.com/apis/site/v2/sports/football/nfl/teams/{}/roster'.format(sync("team", team).lower())
-            print "======================", url
+            print("======================", url)
             players = requests.get(url).json()['athletes']
             _players = players[0]['items'] + players[1]['items'] + players[2]['items']
 
@@ -64,7 +64,7 @@ def get_avatars(teams):
                         wsize = int((float(img.size[0]) * float(hpercent)))
                         img = img.resize((wsize, height), Image.ANTIALIAS)
                         img.save(icon_file) 
-                    except Exception as e:
+                    except Exception:
                         eid = -1
 
                 Player.objects.filter(team=team, first_name=first_name, last_name=last_name).update(eid=eid)
