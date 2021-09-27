@@ -96,7 +96,6 @@ class Game(models.Model):
     ou = models.FloatField(default=0)
     ml = models.CharField(max_length=20)
     date = models.CharField(max_length=30)
-    game_status = models.CharField(max_length=50, choices=GAME_STATUS, default='started')
 
     def __str__(self):
         return '{} - {}'.format(self.home_team, self.visit_team)

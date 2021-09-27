@@ -14,13 +14,15 @@ from general.constants import DATA_SOURCE
 from general import html2text
 from scripts.get_slate import get_slate
 
-def get_players(data_source, teams):
+
+def get_players(data_source, data_source_id, teams):
     fields = ['opponent', 'proj_points', 'salary', 'team']
 
     try:
-        slate, type = get_slate(data_source)
-        url = 'https://www.rotowire.com/daily/tables/optimizer-nfl.php?sport=NFL&' + \
-              'site={}&projections=&type={}&slate={}'.format(data_source, type, slate)
+        slate_id = get_slate(data_source)
+        url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php' + \
+              '?siteID={}&slateID={}&projSource=RotoWire&rst=RotoWire'.format(data_source_id, slate_id)
+
         players = requests.get(url).json()
         if len(players) > 10:
             print(data_source, len(players))
@@ -43,5 +45,5 @@ if __name__ == "__main__":
     teams = [ii.home_team for ii in games] + [ii.visit_team for ii in games]
     Player.objects.all().update(available=False)
 
-    for ds in DATA_SOURCE:
-        get_players(ds[0], teams)
+    for id, ds in enumerate(DATA_SOURCE, 1):
+        get_players(ds[0], id, teams)

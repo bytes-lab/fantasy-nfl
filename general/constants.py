@@ -1,4 +1,3 @@
-
 DATA_SOURCE = (
     ('FanDuel', 'FanDuel'),
     ('DraftKings', 'DraftKings'),

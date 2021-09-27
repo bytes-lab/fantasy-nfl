@@ -12,25 +12,24 @@ from general.models import *
 from general.views import *
 from scripts.get_slate import get_slate
 
-def get_games():
+def get_games(data_source, data_source_id):
     # try:
-        site = 'FanDuel'
-        slate, type = get_slate(site)
-        url = 'https://www.rotowire.com/daily/tables/schedule.php?sport=NFL&site={}&type={}&slate={}'.format(site, type, slate)
+        slate_id = get_slate(data_source)
+        url = 'https://www.rotowire.com/daily/tables/nfl/schedule.php' + \
+            '?siteID={}&slateID={}'.format(data_source_id, slate_id)
 
         games = requests.get(url).json()
         if games:
             Game.objects.all().delete()
-            fields = ['game_status', 'ml', 'home_team', 'visit_team', 'date']
+            fields = ['ml', 'home_team', 'visit_team', 'date']
             for ii in games:
-                if ii['game_status'] == 'upcoming':
-                    defaults = { key: ii[key] for key in fields }
-                    defaults['ou'] = float(ii['ou'] or 0)
-                    Game.objects.create(**defaults)
+                defaults = { key: ii[key] for key in fields }
+                defaults['ou'] = float(ii['ou'] or 0)
+                Game.objects.create(**defaults)
             build_TMS_cache()
             build_player_cache()
     # except:
     #     pass
 
 if __name__ == "__main__":
-    get_games()
+    get_games('FanDuel', 2)
