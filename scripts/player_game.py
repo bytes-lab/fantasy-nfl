@@ -1,15 +1,14 @@
 """
 Use Pro Football Reference for player stat
 """
-import re
 import os
-import urllib2
 import datetime
 from os import sys, path
 
 import django
+import requests
+
 from bs4 import BeautifulSoup
-from django.db.models import Sum
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fantasy_nfl.settings")
@@ -47,7 +46,7 @@ def build_pos_dict(html):
     pos_dict = {}
 
     for table_id in ["home_starters", "vis_starters"]:
-        tbl_text = html.split('<div class="overthrow table_container" id="div_{}">'.format(table_id))[1].split('</div>')[0]
+        tbl_text = html.split(f'<div class="table_container" id="div_{table_id}">')[1].split('</div>')[0]
         soup = BeautifulSoup(tbl_text, "html.parser")
         table = soup.find("table", {"id": table_id})
 
@@ -65,8 +64,7 @@ def build_pos_dict(html):
 def get_game_links(week):
     url = 'https://www.pro-football-reference.com/years/2019/week_{}.htm'.format(week)
     print("||" + url)
-    response = urllib2.urlopen(url)
-    r = response.read()
+    r = requests.get(url).text
     soup = BeautifulSoup(r, "html.parser")
 
     links = []
@@ -79,12 +77,10 @@ def get_game_links(week):
 
 
 def scrape(week):
-
     for game_link in get_game_links(week):
         url = 'https://www.pro-football-reference.com' + game_link
         print("|| - " + url)
-        response = urllib2.urlopen(url)
-        body = response.read()
+        body = requests.get(url).text
 
         soup = BeautifulSoup(body, "html.parser")
         game_results = soup.find_all("div", {"class": "score"})
@@ -94,8 +90,6 @@ def scrape(week):
         # build the pos dict
         pos_dict = build_pos_dict(body)
 
-        tbl_text = body.split('<div class="overthrow table_container" id="div_player_offense">')[1].split('</div>')[0]
-        soup = BeautifulSoup(tbl_text, "html.parser")
         table = soup.find("table", {"id": "player_offense"})
         players = table.find("tbody").find_all("tr")
 

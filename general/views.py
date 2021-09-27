@@ -11,22 +11,22 @@ from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
 from django.utils.encoding import smart_str
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Avg, Q, Sum
+from django.db.models import Avg, Q
 
 from general.models import *
 from general.lineup import *
 from general.color import *
 from general.utils import *
-from general.constants import DATA_SOURCE
+from general.constants import DATA_SOURCE, POSITION
 
-
-POSITION = ['QB', 'RB', 'WR', 'TE', 'DEF']
 
 def _get_game_today():
     return Game.objects.all()
 
+
 def _all_teams():
     return [ii['team'] for ii in Player.objects.values('team').distinct()]
+
 
 def players(request):
     players = Player.objects.filter(data_source='FanDuel').order_by('first_name')
@@ -336,6 +336,7 @@ def player_match_up(request):
 
 def mean(numbers):
     return float(sum(numbers)) / max(len(numbers), 1)
+
 
 def _get_lineups(request):
     ids = request.POST.getlist('ids')

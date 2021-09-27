@@ -1,15 +1,13 @@
 """
 Use Pro Football Reference for team stat
 """
-import re
 import os
-import urllib2
 import datetime
 from os import sys, path
 
 import django
+import requests
 from bs4 import BeautifulSoup
-from django.db.models import Sum
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fantasy_nfl.settings")
@@ -55,8 +53,7 @@ def main(teams):
         __team = team_map.get(_team, _team)
         url = 'https://www.pro-football-reference.com/teams/{}/{}.htm'.format(__team.lower(), year)
         print(url)
-        response = urllib2.urlopen(url)
-        body = response.read()
+        body = requests.get(url).text
 
         soup = BeautifulSoup(body, "html.parser")
         table = soup.find("table", {"id": "games"})

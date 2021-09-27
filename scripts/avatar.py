@@ -12,7 +12,7 @@ django.setup()
 from django.conf import settings
 
 from general.models import *
-from general import html2text
+
 
 def sync(type_, val):
     # fit into roto

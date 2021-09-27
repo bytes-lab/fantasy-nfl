@@ -1,7 +1,7 @@
-import operator as op
 from ortools.linear_solver import pywraplp
+
 from general.models import *
-import pdb
+from general.constants import POSITION_LIMITS_, POSITION_LIMITS, SALARY_CAP, ROSTER_SIZE
 
 
 class Roster:
@@ -63,66 +63,6 @@ class Roster:
         return s
 
 
-POSITION_LIMITS_ = [
-    ["QB", 1, 1],
-    ["RB", 2, 3],
-    ["WR", 3, 4],
-    ["TE", 1, 2],
-    ["DEF", 1, 1],
-    ["RB,WR,TE", 7, 7]
-]
-               
-POSITION_LIMITS = {
-    'FanDuel': [
-                   ["QB", 1, 1],
-                   ["RB", 2, 2],
-                   ["WR", 2, 2],
-                   ["TE", 2, 2],
-                   ["DEF", 1, 1]
-               ],
-    'DraftKings': [
-                      ["QB", 1, 1],
-                      ["RB", 2, 3],
-                      ["WR", 3, 4],
-                      ["TE", 1, 2],
-                      ["DEF", 1, 1],
-                      ["RB,WR,TE", 7, 7]
-                  ],
-    'Yahoo': [
-                ["QB", 1, 3],
-                ["RB", 1, 3],
-                ["WR", 1, 3],
-                ["TE", 1, 3],
-                ["DEF", 1, 2],
-                ["QB,RB", 3, 4],
-                ["WR,TE", 3, 4]
-            ],
-    'Fanball': [
-                ["QB", 1, 3],
-                ["RB", 1, 3],
-                ["WR", 1, 3],
-                ["TE", 1, 3],
-                ["DEF", 1, 3],
-                ["QB,RB", 3, 4],
-                ["WR,TE", 3, 4]
-            ]
-}
-
-SALARY_CAP = {
-    'FanDuel': 60000,
-    'DraftKings': 50000,
-    'Yahoo': 200,
-    'Fanball': 55000
-}
-
-ROSTER_SIZE = {
-    'FanDuel': 9,
-    'DraftKings': 9,
-    'Yahoo': 9,
-    'Fanball': 9
-}
-
-
 def get_lineup(ds, players, teams, locked, max_point):
     solver = pywraplp.Solver('nfl-lineup', pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
 
@@ -148,7 +88,6 @@ def get_lineup(ds, players, teams, locked, max_point):
     for i, player in enumerate(players):
         point_cap.SetCoefficient(variables[i], player.proj_points)
 
-    position_limits = POSITION_LIMITS[ds]
     for position, min_limit, max_limit in POSITION_LIMITS_:
         position_cap = solver.Constraint(min_limit, max_limit)
 
@@ -167,7 +106,6 @@ def get_lineup(ds, players, teams, locked, max_point):
     for variable in variables:
         size_cap.SetCoefficient(variable, 1)
 
-    # pdb.set_trace()
     solution = solver.Solve()
 
     if solution == solver.OPTIMAL:
