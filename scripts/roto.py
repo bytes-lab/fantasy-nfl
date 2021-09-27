@@ -20,10 +20,12 @@ def get_players(data_source, data_source_id, teams):
 
     try:
         slate_id = get_slate(data_source)
-        url = 'https://www.rotowire.com/daily/tables/optimizer-mlb.php' + \
-              '?siteID={}&slateID={}&projSource=RotoWire&rst=RotoWire'.format(data_source_id, slate_id)
+        url = 'https://www.rotowire.com/daily/tables/optimizer-nfl.php' + \
+              '?siteID={}&slateID={}&projSource=RotoWire&oshipSource=RotoWire'.format(data_source_id, slate_id)
+        print(url)
 
         players = requests.get(url).json()
+        print('Number of players:', len(players))
         if len(players) > 10:
             print(data_source, len(players))
             for ii in players:
