@@ -17,6 +17,7 @@ from general.models import *
 from general.lineup import *
 from general.color import *
 from general.utils import *
+from general.constants import DATA_SOURCE
 
 
 POSITION = ['QB', 'RB', 'WR', 'TE', 'DEF']

@@ -2,23 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.db.models import Q
 
+from general.constants import DATA_SOURCE
 
-DATA_SOURCE = (
-    ('FanDuel', 'FanDuel'),
-    ('DraftKings', 'DraftKings'),
-    ('Yahoo', 'Yahoo'),
-    ('Fanball', 'Fanball')
-)
-
-def parse_name(name):
-    # get first and last name from name string after processing
-    name = name.strip().replace('.', '')
-    name_ = name.split(' ')
-    if len(name_) > 1:
-        return name_[0], ' '.join(name_[1:])
-    return name, ''
 
 class Player(models.Model):
     uid = models.IntegerField()
@@ -29,20 +15,9 @@ class Player(models.Model):
     opponent = models.CharField(max_length=50)
     exp = models.IntegerField(default=0)                # for exceptional avatar
     
-    minutes = models.FloatField(default=0)
-    money_line = models.IntegerField(default=0)
-    over_under = models.FloatField(default=0)
-    point_spread = models.FloatField(default=0)
     position = models.CharField(max_length=50)
-    actual_position = models.CharField(max_length=50)
-    proj_custom = models.FloatField(default=0)
-    proj_floor = models.FloatField(default=0)
-    proj_original = models.FloatField(default=0)
     proj_points = models.FloatField(default=0)
-    proj_rotowire = models.FloatField(default=0)
     proj_site = models.FloatField(default=0)
-    proj_third_party_one = models.FloatField(default=0)
-    proj_third_party_two = models.FloatField(default=0)  
     salary = models.IntegerField(default=0)
 
     yoa = models.FloatField(default=0)
@@ -50,7 +25,6 @@ class Player(models.Model):
 
     salary_original = models.FloatField(default=0)
     team = models.CharField(max_length=50)
-    team_points = models.FloatField(default=0)
     value = models.FloatField(default=0)
     
     available = models.BooleanField(default=False)
@@ -71,7 +45,7 @@ class PlayerGame(models.Model):
     opp = models.CharField("Vs", max_length=10)
     game_result = models.CharField("W-L", max_length=15)
     pos = models.CharField(max_length=5)
-    
+
     pass_cmp = models.IntegerField(default=0)       # offense score - DEF
     pass_att = models.IntegerField(default=0)       # defense score - DEF
     pass_cmp_perc = models.FloatField(default=0)    # offense 1st down - DEF
@@ -134,6 +108,6 @@ class TMSCache(models.Model):
     type = models.IntegerField()
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.team

@@ -10,14 +10,12 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fantasy_nfl.settings")
 django.setup()
 
 from general.models import *
+from general.constants import DATA_SOURCE
 from general import html2text
 from scripts.get_slate import get_slate
 
 def get_players(data_source, teams):
-    fields = ['point_spread', 'team_points', 'opponent', 'money_line',
-              'proj_custom', 'proj_floor', 'proj_original', 'proj_points', 'proj_rotowire', 
-              'proj_third_party_one', 'proj_third_party_two', 'actual_position', 
-              'salary', 'team']
+    fields = ['opponent', 'proj_points', 'salary', 'team']
 
     try:
         slate, type = get_slate(data_source)
